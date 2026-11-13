@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": [
+    "6 routes HTTP 200",
+    "desktop overflow",
+    "390px home overflow",
+    "token lookup submits",
+    "mobile menu navigates"
+  ],
+  "not_tested": [
+    "wallet transactions",
+    "holder authentication",
+    "all RPC responses availability"
+  ]
+}

@@ -1,0 +1,7 @@
+HOST01 validation
+PASS: uploaded canonical snapshot hash equals on-chain snapshot_by_id commitment.
+PASS: Worker bundle syntax.
+PASS: Node mocked RPC/D1 authentication tests.
+PASS: local Cloudflare workerd (compatibility 2026-04-01) with real D1 SQLite and mocked RPC: valid signature, bad signature/message, full-access key requirement, expired challenge, atomic single consumption, tampered JWT, holder revocation, protected endpoints, origin denial, disabled admin and receipt endpoints, public report hash, methodology and dynamic SVG route.
+NOT YET TESTED: remote Cloudflare CPU quota, actual deployed wallet login, Vercel production build, remote D1 quota, real token-transfer revocation.
+No remote deployment performed. No private keys included. No cron configured.

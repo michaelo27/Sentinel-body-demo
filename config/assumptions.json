@@ -1,0 +1,101 @@
+{
+  "$comment": "Every heuristic/estimate is labelled here and badged in the UI. kind=published_catalog means it came from a machine-readable official source; kind=assumption means an engineering estimate the user can edit.",
+  "retrieved_at": "2026-11-12T21:37:03Z",
+  "inference": {
+    "kind": "published_catalog",
+    "source_url": "https://cloud-api.near.ai/v1/models",
+    "published_page": "https://near.ai/pricing",
+    "units": "USD per 1,000,000 tokens (input and output priced separately)",
+    "models": [
+      { "id": "Qwen/Qwen3.8-27B", "input_usd_per_1m": 0.04, "output_usd_per_1m": 1.35, "context_length": 262144 },
+      { "id": "z-ai/glm-5.3-flash", "input_usd_per_1m": 0.08, "output_usd_per_1m": 0.5, "context_length": 1048576 },
+      { "id": "deepseek-ai/DeepSeek-V4.1-Flash-1017", "input_usd_per_1m": 0.3, "output_usd_per_1m": 1.2, "context_length": 1048576 },
+      { "id": "openai/gpt-5-nano", "input_usd_per_1m": 0.05, "output_usd_per_1m": 0.4, "context_length": 400000 },
+      { "id": "Qwen/Qwen3.6-35B-A3B-FP8", "input_usd_per_1m": 0.17, "output_usd_per_1m": 1.1, "context_length": 262144 }
+    ],
+    "default_model": "Qwen/Qwen3.8-27B",
+    "ui_badge": "Published catalog"
+  },
+  "assumptions": [
+    {
+      "id": "near_gas_units_per_action",
+      "kind": "assumption",
+      "value": 300000000000,
+      "unit": "gas units per agent action (approx 0.3 Tgas)",
+      "source_url": "https://free.rpc.fastnear.com",
+      "rationale": "Order-of-magnitude for a function_call plus a receipt. Gas price itself is live from the gas_price RPC; only the unit count is an estimate.",
+      "ui_badge": "Assumption",
+      "user_editable": true
+    },
+    {
+      "id": "near_storage_bytes_per_agent",
+      "kind": "assumption",
+      "value": 700,
+      "unit": "bytes of persistent state per agent",
+      "source_url": "https://free.rpc.fastnear.com",
+      "rationale": "Storage cost per byte is live from EXPERIMENTAL_protocol_config (1e19 yocto/byte); the byte count is scenario input.",
+      "ui_badge": "Assumption",
+      "user_editable": true
+    },
+    {
+      "id": "evm_gas_units_per_action",
+      "kind": "assumption",
+      "value": 120000,
+      "unit": "gas units per comparable action on Base and Ethereum",
+      "source_url": "https://mainnet.base.org",
+      "rationale": "An ERC-4337-ish userOp / simple contract write. gasPrice is live from eth_gasPrice on each chain.",
+      "ui_badge": "Assumption",
+      "user_editable": true
+    },
+    {
+      "id": "solana_base_fee_lamports_per_signature",
+      "kind": "measured",
+      "value": 5000,
+      "unit": "lamports per signature",
+      "source_url": "https://api.mainnet-beta.solana.com",
+      "method": "getFeeForMessage with a real recent blockhash (verified 2026-11-12: result.value = 5000)",
+      "rationale": "Solana's getFees RPC was removed (verified -32601), and solana.com docs returned 429 from this datacenter, so the base fee was MEASURED via the live RPC instead of quoted from docs. Rent exemption comes from getMinimumBalanceForRentExemption (result 1300480 lamports for 128 bytes).",
+      "ui_badge": "Measured on-chain",
+      "user_editable": false
+    },
+    {
+      "id": "solana_signatures_per_action",
+      "kind": "assumption",
+      "value": 1,
+      "unit": "signatures per agent action",
+      "source_url": "https://solana.com/docs/core/fees",
+      "ui_badge": "Assumption",
+      "user_editable": true
+    },
+    {
+      "id": "inference_input_output_split",
+      "kind": "assumption",
+      "value": 0.7,
+      "unit": "fraction of tokens billed at the input rate",
+      "source_url": "https://near.ai/pricing",
+      "rationale": "Model prices are official; the mix of prompt vs completion tokens is a scenario assumption.",
+      "ui_badge": "Assumption",
+      "user_editable": true
+    },
+    {
+      "id": "utilization",
+      "kind": "assumption",
+      "value": 0.8,
+      "unit": "fraction of theoretical capacity actually used",
+      "source_url": null,
+      "rationale": "Pure scenario knob; no external source claims it.",
+      "ui_badge": "Assumption",
+      "user_editable": true
+    },
+    {
+      "id": "infra_monthly_usd_default",
+      "kind": "assumption",
+      "value": 0,
+      "unit": "USD/month optional infra cost",
+      "source_url": null,
+      "rationale": "User-provided; default 0 because this MVP runs on free public endpoints.",
+      "ui_badge": "Assumption",
+      "user_editable": true
+    }
+  ]
+}

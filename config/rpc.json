@@ -1,0 +1,30 @@
+{
+  "$comment": "Ordered RPC fallbacks. Verified 2026-11-12, see docs/SOURCES.md. Foundation nodes now answer JSON-RPC with 429 deprecation notices, so they are LAST.",
+  "checked_at": "2026-11-12T21:37:03Z",
+  "user_agent": "SentinelBody/0.1 (NEAR hackathon MVP; public-data demo; read-only)",
+  "max_concurrency": 4,
+  "backoff_ms": [400, 1600, 3200],
+  "healthcheck_method": "status",
+  "networks": {
+    "testnet": {
+      "ordered": [
+        { "url": "https://test.rpc.fastnear.com", "role": "primary", "status": "live" },
+        { "url": "https://near-testnet.drpc.org", "role": "fallback", "status": "live", "note": "POST only; GET /status is 404" },
+        { "url": "https://rpc.testnet.near.org", "role": "last_resort", "status": "deprecated", "note": "429 THIS ENDPOINT IS DEPRECATED as of 2026-11-12" }
+      ]
+    },
+    "mainnet": {
+      "ordered": [
+        { "url": "https://free.rpc.fastnear.com", "role": "primary", "status": "live" },
+        { "url": "https://rpc.mainnet.near.org", "role": "last_resort", "status": "deprecated", "note": "429 THIS ENDPOINT IS DEPRECATED as of 2026-11-12" }
+      ]
+    }
+  },
+  "archival": {
+    "verified_pinned_window_blocks": 86400,
+    "garbage_collected_at_delta": 100000,
+    "approx_block_time_seconds": 0.566,
+    "capital_flow_24h_strategy": "snapshot_diff_fallback",
+    "note": "24h net flow uses the agent's own previous real snapshot; pinned-block deltas are used opportunistically for <=12h."
+  }
+}

@@ -1,0 +1,836 @@
+{
+  "schema": "sentinel.snapshot/1",
+  "snapshot_id": "snap-1794592774-60af8391549c",
+  "epoch_ts": "2026-11-13T17:59:34.928Z",
+  "methodology_version": "v1",
+  "observed_network": "mainnet",
+  "settled_network": "testnet",
+  "inputs": {
+    "blocks": {
+      "mainnet.latest": 224397972,
+      "mainnet.pinned_12h": 224311572,
+      "mainnet.pinned_resolved": 224311572
+    },
+    "queries": [
+      {
+        "id": "near.status",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "status",
+        "params": [],
+        "response_digest": "a23956bd",
+        "status": "ok"
+      },
+      {
+        "id": "near.gas_price",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "gas_price",
+        "params": {
+          "finality": "final"
+        },
+        "response_digest": "30e0f9ff",
+        "status": "ok"
+      },
+      {
+        "id": "near.protocol_config",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "EXPERIMENTAL_protocol_config",
+        "params": {
+          "finality": "final"
+        },
+        "response_digest": "d9686eef",
+        "status": "ok"
+      },
+      {
+        "id": "near.validators",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "validators",
+        "params": [
+          null
+        ],
+        "response_digest": "83373771",
+        "status": "ok"
+      },
+      {
+        "id": "coingecko.simple_price",
+        "url": "https://api.coingecko.com/api/v3/simple/price?ids=near,ethereum,solana&vs_currencies=usd&include_last_updated_at=true",
+        "method": "GET",
+        "params": {
+          "ids": "near,ethereum,solana",
+          "vs_currencies": "usd"
+        },
+        "response_digest": "58d0fb70",
+        "status": "ok"
+      },
+      {
+        "id": "near_ai.models",
+        "url": "https://cloud-api.near.ai/v1/models",
+        "method": "GET",
+        "params": {},
+        "response_digest": "bfbefc96",
+        "status": "ok"
+      },
+      {
+        "id": "eth.gasPrice",
+        "url": "https://ethereum-rpc.publicnode.com",
+        "method": "eth_gasPrice",
+        "params": [],
+        "response_digest": "a6d99c77",
+        "status": "ok"
+      },
+      {
+        "id": "base.gasPrice",
+        "url": "https://mainnet.base.org",
+        "method": "eth_gasPrice",
+        "params": [],
+        "response_digest": "cad58818",
+        "status": "ok"
+      },
+      {
+        "id": "solana.rent",
+        "url": "https://api.mainnet-beta.solana.com",
+        "method": "getMinimumBalanceForRentExemption",
+        "params": [
+          128
+        ],
+        "response_digest": "f64a87fd",
+        "status": "ok"
+      },
+      {
+        "id": "solana.getFeeForMessage",
+        "url": "https://api.mainnet-beta.solana.com",
+        "method": "getFeeForMessage",
+        "params": [
+          "<message with 1 signature>"
+        ],
+        "response_digest": "2249d6b7",
+        "status": "ok"
+      },
+      {
+        "id": "view_account:intents.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "intents.near",
+          "finality": "final"
+        },
+        "response_digest": "49e5e73b",
+        "status": "ok"
+      },
+      {
+        "id": "view_account.pinned:intents.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "intents.near",
+          "block_id": 224311572
+        },
+        "response_digest": "cad955f1",
+        "status": "ok"
+      },
+      {
+        "id": "ft_balance_of:wNEAR:intents.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "call_function",
+        "params": {
+          "contract": "wrap.near",
+          "method": "ft_balance_of",
+          "account_id": "intents.near"
+        },
+        "response_digest": "b241058c",
+        "status": "ok"
+      },
+      {
+        "id": "ft_balance_of:USDC:intents.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "call_function",
+        "params": {
+          "contract": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+          "method": "ft_balance_of",
+          "account_id": "intents.near"
+        },
+        "response_digest": "b111ea7a",
+        "status": "ok"
+      },
+      {
+        "id": "view_account:linear-protocol.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "linear-protocol.near",
+          "finality": "final"
+        },
+        "response_digest": "6cf002e0",
+        "status": "ok"
+      },
+      {
+        "id": "view_account.pinned:linear-protocol.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "linear-protocol.near",
+          "block_id": 224311572
+        },
+        "response_digest": "e44f6865",
+        "status": "ok"
+      },
+      {
+        "id": "view_account:meta-pool.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "meta-pool.near",
+          "finality": "final"
+        },
+        "response_digest": "e03dd1fd",
+        "status": "ok"
+      },
+      {
+        "id": "view_account.pinned:meta-pool.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "meta-pool.near",
+          "block_id": 224311572
+        },
+        "response_digest": "60a45e46",
+        "status": "ok"
+      },
+      {
+        "id": "view_account:v2.ref-finance.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "v2.ref-finance.near",
+          "finality": "final"
+        },
+        "response_digest": "0eed2d98",
+        "status": "ok"
+      },
+      {
+        "id": "view_account.pinned:v2.ref-finance.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "v2.ref-finance.near",
+          "block_id": 224311572
+        },
+        "response_digest": "8613bf84",
+        "status": "ok"
+      },
+      {
+        "id": "ft_balance_of:wNEAR:v2.ref-finance.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "call_function",
+        "params": {
+          "contract": "wrap.near",
+          "method": "ft_balance_of",
+          "account_id": "v2.ref-finance.near"
+        },
+        "response_digest": "fb498540",
+        "status": "ok"
+      },
+      {
+        "id": "ft_balance_of:USDC:v2.ref-finance.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "call_function",
+        "params": {
+          "contract": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+          "method": "ft_balance_of",
+          "account_id": "v2.ref-finance.near"
+        },
+        "response_digest": "862533ee",
+        "status": "ok"
+      },
+      {
+        "id": "view_account:dclv2.ref-labs.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "dclv2.ref-labs.near",
+          "finality": "final"
+        },
+        "response_digest": "36688c80",
+        "status": "ok"
+      },
+      {
+        "id": "view_account.pinned:dclv2.ref-labs.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "dclv2.ref-labs.near",
+          "block_id": 224311572
+        },
+        "response_digest": "e1720840",
+        "status": "ok"
+      },
+      {
+        "id": "ft_balance_of:wNEAR:dclv2.ref-labs.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "call_function",
+        "params": {
+          "contract": "wrap.near",
+          "method": "ft_balance_of",
+          "account_id": "dclv2.ref-labs.near"
+        },
+        "response_digest": "15e0f1fa",
+        "status": "ok"
+      },
+      {
+        "id": "ft_balance_of:USDC:dclv2.ref-labs.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "call_function",
+        "params": {
+          "contract": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+          "method": "ft_balance_of",
+          "account_id": "dclv2.ref-labs.near"
+        },
+        "response_digest": "9bbe8956",
+        "status": "ok"
+      },
+      {
+        "id": "view_account:contract.main.burrow.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "contract.main.burrow.near",
+          "finality": "final"
+        },
+        "response_digest": "8911e9cb",
+        "status": "ok"
+      },
+      {
+        "id": "view_account.pinned:contract.main.burrow.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "contract.main.burrow.near",
+          "block_id": 224311572
+        },
+        "response_digest": "8d2b6357",
+        "status": "ok"
+      },
+      {
+        "id": "ft_balance_of:wNEAR:contract.main.burrow.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "call_function",
+        "params": {
+          "contract": "wrap.near",
+          "method": "ft_balance_of",
+          "account_id": "contract.main.burrow.near"
+        },
+        "response_digest": "f973cdec",
+        "status": "ok"
+      },
+      {
+        "id": "ft_balance_of:USDC:contract.main.burrow.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "call_function",
+        "params": {
+          "contract": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+          "method": "ft_balance_of",
+          "account_id": "contract.main.burrow.near"
+        },
+        "response_digest": "b54d01e8",
+        "status": "ok"
+      },
+      {
+        "id": "view_account:aurora",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "aurora",
+          "finality": "final"
+        },
+        "response_digest": "f27981c2",
+        "status": "ok"
+      },
+      {
+        "id": "view_account.pinned:aurora",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "aurora",
+          "block_id": 224311572
+        },
+        "response_digest": "56823136",
+        "status": "ok"
+      },
+      {
+        "id": "view_account:wrap.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "wrap.near",
+          "finality": "final"
+        },
+        "response_digest": "c9eaf040",
+        "status": "ok"
+      },
+      {
+        "id": "view_account.pinned:wrap.near",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "wrap.near",
+          "block_id": 224311572
+        },
+        "response_digest": "7adf2f38",
+        "status": "ok"
+      },
+      {
+        "id": "view_account.pinned:224311572",
+        "url": "https://free.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "intents.near",
+          "block_id": 224311572
+        },
+        "response_digest": "cad955f1",
+        "status": "ok"
+      },
+      {
+        "id": "fleet.nft_total_supply",
+        "url": "https://test.rpc.fastnear.com",
+        "method": "nft_total_supply",
+        "params": {},
+        "response_digest": "370cabd5",
+        "status": "ok"
+      },
+      {
+        "id": "fleet.nft_tokens",
+        "url": "https://test.rpc.fastnear.com",
+        "method": "nft_tokens",
+        "params": {
+          "from_index": "0",
+          "limit": 100
+        },
+        "response_digest": "b13c8640",
+        "status": "ok"
+      },
+      {
+        "id": "fleet.snapshots",
+        "url": "https://test.rpc.fastnear.com",
+        "method": "snapshots",
+        "params": {
+          "from": 0,
+          "limit": 50
+        },
+        "response_digest": "741638a5",
+        "status": "ok"
+      },
+      {
+        "id": "fleet.agent_account_of:0",
+        "url": "https://test.rpc.fastnear.com",
+        "method": "agent_account_of",
+        "params": {
+          "token_id": "0"
+        },
+        "response_digest": "b2fb8dc1",
+        "status": "ok"
+      },
+      {
+        "id": "fleet.view_account:agent-0.sntl-02e90eacb8.testnet",
+        "url": "https://test.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "agent-0.sntl-02e90eacb8.testnet"
+        },
+        "response_digest": "6de85f25",
+        "status": "ok"
+      },
+      {
+        "id": "fleet.keys:agent-0.sntl-02e90eacb8.testnet",
+        "url": "https://test.rpc.fastnear.com",
+        "method": "view_access_key_list",
+        "params": {
+          "account_id": "agent-0.sntl-02e90eacb8.testnet"
+        },
+        "response_digest": "2f62f2e8",
+        "status": "ok"
+      },
+      {
+        "id": "fleet.agent_account_of:1",
+        "url": "https://test.rpc.fastnear.com",
+        "method": "agent_account_of",
+        "params": {
+          "token_id": "1"
+        },
+        "response_digest": "c25aa69e",
+        "status": "ok"
+      },
+      {
+        "id": "fleet.view_account:agent-1.sntl-02e90eacb8.testnet",
+        "url": "https://test.rpc.fastnear.com",
+        "method": "view_account",
+        "params": {
+          "account_id": "agent-1.sntl-02e90eacb8.testnet"
+        },
+        "response_digest": "ee9f34ab",
+        "status": "ok"
+      },
+      {
+        "id": "fleet.keys:agent-1.sntl-02e90eacb8.testnet",
+        "url": "https://test.rpc.fastnear.com",
+        "method": "view_access_key_list",
+        "params": {
+          "account_id": "agent-1.sntl-02e90eacb8.testnet"
+        },
+        "response_digest": "b58f7042",
+        "status": "ok"
+      }
+    ],
+    "prices": {
+      "near_usd": 3.5,
+      "eth_usd": 1937.49,
+      "sol_usd": 79.92,
+      "price_source": "https://api.coingecko.com/api/v3/simple/price?ids=near,ethereum,solana&vs_currencies=usd&include_last_updated_at=true",
+      "price_observed_at": 1794592746
+    },
+    "gas": {
+      "near_gas_price_yocto": "100000000",
+      "near_storage_byte_cost_yocto": "10000000000000000000",
+      "near_min_gas_price_yocto": "1000000000",
+      "eth_gas_price_wei": "143789474",
+      "base_gas_price_wei": "6000000",
+      "sol_rent_lamports_128b": 1300480,
+      "sol_base_fee_lamports": 5000
+    },
+    "params": {
+      "methodology_version": "v1",
+      "window_hours": 24,
+      "cohorts": [
+        "intents",
+        "staking",
+        "defi",
+        "bridge",
+        "treasury"
+      ],
+      "cohort_balances": [
+        {
+          "account": "intents.near",
+          "near_yocto": "137468894096819989709274022474",
+          "wnear_raw": "17671965342547658625762986935315",
+          "usdc_raw": "2560408536161",
+          "near_ok": true,
+          "ft_ok": true,
+          "near_yocto_pinned": "136945583701182561704727542512"
+        },
+        {
+          "account": "linear-protocol.near",
+          "near_yocto": "1091196826739994526936188871948",
+          "wnear_raw": "0",
+          "usdc_raw": "0",
+          "near_ok": true,
+          "ft_ok": false,
+          "near_yocto_pinned": "1091258609076377324951766351319"
+        },
+        {
+          "account": "meta-pool.near",
+          "near_yocto": "291374331500536647873611417634",
+          "wnear_raw": "0",
+          "usdc_raw": "0",
+          "near_ok": true,
+          "ft_ok": false,
+          "near_yocto_pinned": "300338970105536929155001242009"
+        },
+        {
+          "account": "v2.ref-finance.near",
+          "near_yocto": "32621764951387578352644601682",
+          "wnear_raw": "2276423199173195871338900654990",
+          "usdc_raw": "1848344796986",
+          "near_ok": true,
+          "ft_ok": true,
+          "near_yocto_pinned": "32621642951579940364399291234"
+        },
+        {
+          "account": "dclv2.ref-labs.near",
+          "near_yocto": "9689366015395233870138389903",
+          "wnear_raw": "303259409249659248669895974442",
+          "usdc_raw": "707115458403",
+          "near_ok": true,
+          "ft_ok": true,
+          "near_yocto_pinned": "9683785075395233870138420901"
+        },
+        {
+          "account": "contract.main.burrow.near",
+          "near_yocto": "11023383142260863927307954912",
+          "wnear_raw": "2762265175867366648259680453325",
+          "usdc_raw": "1773042986655",
+          "near_ok": true,
+          "ft_ok": true,
+          "near_yocto_pinned": "11022833142260863927307954829"
+        },
+        {
+          "account": "aurora",
+          "near_yocto": "145768497181409676817125837427",
+          "wnear_raw": "0",
+          "usdc_raw": "0",
+          "near_ok": true,
+          "ft_ok": false,
+          "near_yocto_pinned": "145768497181409676817125837427"
+        },
+        {
+          "account": "wrap.near",
+          "near_yocto": "37324568272593440984576001690494",
+          "wnear_raw": "0",
+          "usdc_raw": "0",
+          "near_ok": true,
+          "ft_ok": false,
+          "near_yocto_pinned": "37343267263701649040807227581342"
+        }
+      ],
+      "model_catalog_digest": "03ae35435a65bfaad5f0c69de8b3f6166770cc4b69fd8d429b9019f3c6514ca4",
+      "validators": 354,
+      "cost_scenario": {
+        "agents": 10,
+        "txPerAgentDay": 100,
+        "avgTgasPerTx": 0.3,
+        "persistentStorageMB": 1,
+        "inferenceTokensPerDay": 200000,
+        "model": "Qwen/Qwen3.8-27B",
+        "infraUsdPerMonth": 0
+      },
+      "cost_assumptions": {
+        "evmGasUnitsPerAction": 120000,
+        "solSignaturesPerAction": 1,
+        "solAccountsPerAgent": 1,
+        "inferenceInputSplit": 0.7,
+        "utilization": 0.8,
+        "nearStorageBytesPerAgent": 700
+      }
+    }
+  },
+  "capital_flow": {
+    "method": "pinned_block_delta_12h (verified RPC archival window; garbage-collected beyond ~86,400 blocks)",
+    "window_hours": 12,
+    "reference": "block:224311572",
+    "cohorts": [
+      {
+        "id": "intents",
+        "label": "Intents / solver hub",
+        "category": "intents",
+        "net_near": 523.31039564,
+        "net_usd": 1831.5864,
+        "assets": {
+          "NEAR": 523.31039564,
+          "wNEAR": 0,
+          "USDC": 0
+        },
+        "confidence": "measured: pinned-block balance delta"
+      },
+      {
+        "id": "staking",
+        "label": "Liquid staking",
+        "category": "staking",
+        "net_near": -9026.42094138,
+        "net_usd": -31592.4733,
+        "assets": {
+          "NEAR": -9026.42094138
+        },
+        "confidence": "measured: pinned-block balance delta"
+      },
+      {
+        "id": "defi",
+        "label": "DeFi venues",
+        "category": "defi",
+        "net_near": 6.25293981,
+        "net_usd": 21.8853,
+        "assets": {
+          "NEAR": 6.25293981,
+          "wNEAR": 0,
+          "USDC": 0
+        },
+        "confidence": "measured: pinned-block balance delta"
+      },
+      {
+        "id": "bridge",
+        "label": "Bridge / Aurora",
+        "category": "bridge",
+        "net_near": 0,
+        "net_usd": 0,
+        "assets": {
+          "NEAR": 0
+        },
+        "confidence": "measured: pinned-block balance delta"
+      },
+      {
+        "id": "treasury",
+        "label": "wNEAR reserve",
+        "category": "treasury",
+        "net_near": -18698.99110821,
+        "net_usd": -65446.4689,
+        "assets": {
+          "NEAR": -18698.99110821
+        },
+        "confidence": "measured: pinned-block balance delta"
+      }
+    ],
+    "total_net_near": -27195.84871414,
+    "total_net_usd": -95185.4705,
+    "confidence": "first_round_baseline_pin"
+  },
+  "cost_of_living": {
+    "actionsPerMonth": 24000,
+    "monthly": {
+      "gas_usd": 2.52,
+      "storage_locked_near": 10,
+      "storage_locked_usd": 35,
+      "inference_usd": 2.598,
+      "infra_usd": 0,
+      "total_usd": 5.118
+    },
+    "comparison": [
+      {
+        "chain": "NEAR",
+        "monthly_usd": 5.118,
+        "assumptions": [
+          "gas price: live RPC",
+          "storage cost/byte: live RPC",
+          "Tgas/tx: scenario input"
+        ]
+      },
+      {
+        "chain": "Base",
+        "monthly_usd": 33.479827,
+        "assumptions": [
+          "gasPrice: live eth_gasPrice",
+          "gas units/action: ASSUMPTION",
+          "ETH price: CoinGecko"
+        ]
+      },
+      {
+        "chain": "Ethereum",
+        "monthly_usd": 802.341124,
+        "assumptions": [
+          "gasPrice: live eth_gasPrice",
+          "gas units/action: ASSUMPTION",
+          "ETH price: CoinGecko"
+        ]
+      },
+      {
+        "chain": "Solana",
+        "monthly_usd": 10.629744,
+        "assumptions": [
+          "base fee: measured getFeeForMessage",
+          "rent: live RPC",
+          "signatures/action: ASSUMPTION"
+        ]
+      }
+    ],
+    "cost_per_1000_actions_usd": 0.21325,
+    "formulas": [
+      "actions/month = agents × tx/agent/day × 30 × utilization(assumption)",
+      "NEAR gas NEAR/action = avgTgas × 10^12 × gas_price_yocto / 10^24",
+      "NEAR gas USD/month = actions/month × gas NEAR/action × NEAR/USD",
+      "storage LOCKED NEAR = MB × 10^6 × storage_amount_per_byte_yocto / 10^24 (locked capital, NOT spent)",
+      "inference USD/month = tokens/day × 30 / 10^6 × (split × input_rate + (1−split) × output_rate)",
+      "EVM USD/month = actions/month × gas_units(assumption) × gasPrice_wei / 10^18 × ETH/USD",
+      "Solana USD/month = actions/month × sigs(assumption) × base_fee_lamports / 10^9 × SOL/USD + rent × SOL/USD",
+      "cost per 1,000 actions = total spent USD/month ÷ (actions/month ÷ 1000)"
+    ],
+    "assumptions_used": [
+      "utilization 0.8 (ASSUMPTION)",
+      "EVM gas units/action 120000 (ASSUMPTION)",
+      "Solana signatures/action 1 (ASSUMPTION)",
+      "inference input/output split 0.7 (ASSUMPTION)",
+      "scenario: 10 agents, 100 tx/day each (USER INPUT)",
+      "model Qwen/Qwen3.8-27B priced from the official NEAR AI Cloud catalog (PUBLISHED)"
+    ]
+  },
+  "agent_health": {
+    "score": 25,
+    "confidence": 0.6,
+    "coverage": 0.6,
+    "components": [
+      {
+        "id": "activity",
+        "raw": 0,
+        "normalized": 0,
+        "weight": 0.2,
+        "confidence": "measured (fleet only; heuristic cohort disabled P1)"
+      },
+      {
+        "id": "growth",
+        "raw": 0,
+        "normalized": 50,
+        "weight": 0.15,
+        "confidence": "measured"
+      },
+      {
+        "id": "capital",
+        "raw": 0,
+        "normalized": 50,
+        "weight": 0.2,
+        "confidence": "measured"
+      },
+      {
+        "id": "concentration",
+        "raw": 0.5,
+        "normalized": 50,
+        "weight": 0.15,
+        "confidence": "measured"
+      },
+      {
+        "id": "retention",
+        "raw": 0,
+        "normalized": 0,
+        "weight": 0.15,
+        "confidence": "measured"
+      },
+      {
+        "id": "fleet_liveness",
+        "raw": 0,
+        "normalized": 0,
+        "weight": 0.15,
+        "confidence": "measured"
+      }
+    ],
+    "cohorts": [
+      {
+        "id": "fleet",
+        "confidence": "measured",
+        "accounts": 2,
+        "status": "primary (fully real, testnet)"
+      },
+      {
+        "id": "known",
+        "confidence": "known",
+        "accounts": 0,
+        "status": "empty: no verified registry"
+      },
+      {
+        "id": "heuristic",
+        "confidence": "heuristic",
+        "accounts": 0,
+        "status": "disabled P1"
+      }
+    ],
+    "fleet": {
+      "agents": 2,
+      "active": 0,
+      "balance_near": 3.582,
+      "publishes": 0
+    },
+    "what_this_is_not": "Not a price signal, not an investment metric, not a census of all agents, and not ground truth about account identity. It is a bounded, labelled measurement of our own agent fleet plus verified cohort balances."
+  },
+  "meta": {
+    "agent_token_id": "0",
+    "agent_account": "agent-0.sntl-02e90eacb8.testnet",
+    "runtime_version": "0.1.0",
+    "mode": "live",
+    "stale": false,
+    "notes": [
+      "Model Qwen/Qwen3.8-27B priced from the official NEAR AI Cloud catalog (published, not an assumption).",
+      "NEAR gas price 100000000 yocto/unit and storage 10000000000000000000 yocto/byte are live RPC values.",
+      "Capital Flow method: pinned_block_delta_12h (verified RPC archival window; garbage-collected beyond ~86,400 blocks). Net, inferred flow — never gross transfers.",
+      "Health Index confidence 0.6; heuristic cohort is disabled (P1)."
+    ]
+  },
+  "proof": {
+    "content_hash": "c119694cf636474fd55aee9d94cad9d7158a4a704253f645d1b0295c11c0120a",
+    "commitment_tx": "EtHVAnoRBND2m4JZ1ih7ZFUoYnpNwQCwCFzQMSkL55iN",
+    "commitment_status": "confirmed",
+    "publisher_account": "agent-0.sntl-02e90eacb8.testnet",
+    "explorer_url": "https://testnet.nearblocks.io/txns/EtHVAnoRBND2m4JZ1ih7ZFUoYnpNwQCwCFzQMSkL55iN"
+  }
+}

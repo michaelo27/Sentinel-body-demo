@@ -1,0 +1,32 @@
+{
+  "name": "sentinel-body",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sentinel Body \u2014 living AI agent NFTs on NEAR testnet with verifiable, holder-gated ecosystem intelligence.",
+  "license": "MIT",
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "sources:check": "python3 scripts/verify-sources.py",
+    "test": "corepack pnpm --filter @sentinel/core test && corepack pnpm --filter @sentinel/agent test",
+    "test:contracts": "bash scripts/test-contracts.sh",
+    "build:contracts": "bash scripts/build-contracts.sh",
+    "deploy": "node scripts/deploy.mjs",
+    "mint:genesis": "node scripts/mint-genesis.mjs",
+    "agent:run": "tsx services/agent/src/run-once.ts",
+    "gateway": "tsx services/agent/src/server.ts",
+    "web": "corepack pnpm --filter @sentinel/web dev",
+    "verify": "tsx scripts/verify.ts",
+    "dev": "corepack pnpm gateway & corepack pnpm web",
+    "test:transactions": "node --test scripts/tests/near-tx.test.mjs",
+    "typecheck:web": "corepack pnpm --filter @sentinel/web exec tsc --noEmit",
+    "build:web": "corepack pnpm --filter @sentinel/web build"
+  },
+  "devDependencies": {
+    "tsx": "4.20.6",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
+  }
+}

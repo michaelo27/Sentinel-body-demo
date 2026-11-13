@@ -1,0 +1,68 @@
+{
+  "ok": true,
+  "steps": [
+    {
+      "name": "admin vault before",
+      "status": 200
+    },
+    {
+      "name": "transfer",
+      "status": 200,
+      "response": {
+        "tx": "EJhK3ZQg7jTdtGyLFahd674JTZLw6Tj4totfmN1DWYaE",
+        "explorer_url": "https://testnet.nearblocks.io/txns/EJhK3ZQg7jTdtGyLFahd674JTZLw6Tj4totfmN1DWYaE",
+        "from": "sentinel-owner.testnet",
+        "to": "sentinel-second.testnet",
+        "token_id": "0",
+        "success": true,
+        "confirmed": true,
+        "owner_id": "sentinel-second.testnet"
+      }
+    },
+    {
+      "name": "admin vault after",
+      "status": 403,
+      "body": "{\"error\":\"Access revoked: this account no longer holds a Sentinel Body.\",\"code\":\"HOLDER_REQUIRED\"}"
+    },
+    {
+      "name": "status after",
+      "owner": "sentinel-second.testnet",
+      "holders": {
+        "sentinel-owner.testnet": false,
+        "sentinel-second.testnet": true
+      }
+    },
+    {
+      "name": "second vault",
+      "status": 200
+    },
+    {
+      "name": "history",
+      "agent_account": "agent-0.sentinel-body.testnet",
+      "commitments": 2,
+      "no_full_access_key": true
+    },
+    {
+      "name": "transfer back",
+      "status": 200,
+      "response": {
+        "tx": "451kUQttgqjvXbtutGPxh2Z1WsEq3wDMWX7Lz6Zyq7j5",
+        "explorer_url": "https://testnet.nearblocks.io/txns/451kUQttgqjvXbtutGPxh2Z1WsEq3wDMWX7Lz6Zyq7j5",
+        "from": "sentinel-second.testnet",
+        "to": "sentinel-owner.testnet",
+        "token_id": "0",
+        "success": true,
+        "confirmed": true,
+        "owner_id": "sentinel-owner.testnet"
+      }
+    },
+    {
+      "name": "final",
+      "owner": "sentinel-owner.testnet",
+      "holders": {
+        "sentinel-owner.testnet": true,
+        "sentinel-second.testnet": true
+      }
+    }
+  ]
+}

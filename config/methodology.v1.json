@@ -1,0 +1,52 @@
+{
+  "methodology_version": "v1",
+  "title": "Sentinel Body Intelligence Methodology v1",
+  "published_at": "2026-11-12",
+  "observed_network": "mainnet",
+  "settled_network": "testnet",
+  "data_environment_variable": "DATA_NETWORK (mainnet | testnet; default mainnet observation). Flip to testnet if hackathon rules require all-testnet data; indices become thin and the Sentinel Fleet cohort carries the Health Index.",
+  "snapshot": {
+    "schema": "sentinel.snapshot/1",
+    "canonicalization": "RFC 8785 JCS (stable stringify) then SHA-256 hex, 64 lowercase hex chars",
+    "window_hours": 24,
+    "round_interval_minutes": 30,
+    "public_delay_minutes": 360,
+    "demo_public_delay_minutes": 15,
+    "hash_covers": ["inputs", "capital_flow", "cost_of_living", "agent_health", "meta", "schema", "snapshot_id", "epoch_ts", "methodology_version", "observed_network", "settled_network"],
+    "excluded_from_hash": ["proof", "commitment", "gateway_added_fields"],
+    "note": "Only the canonicalized snapshot body is hashed. Off-chain proof metadata (tx hash, retrieval time) is deliberately outside the hash so the commitment can be attached afterwards."
+  },
+  "capital_flow": {
+    "tier": 1,
+    "name": "Capital Flow Map (net, inferred flow)",
+    "method": "Per cohort and asset: balance_now - balance_at_reference. Reference = the agent's previous real snapshot (default, no archival needed) or a pinned block_id when within the verified 86,400-block window.",
+    "usd_conversion": "End-of-window CoinGecko simple/price; labelled 'converted at end-of-window price'.",
+    "visual": "Sankey with a synthetic 'Rest of NEAR / External' balancing node. Positive delta receives from it, negative delta sends to it. Labelled 'net, inferred flow' — NEVER gross transfers.",
+    "confidence": "measured_balance_delta"
+  },
+  "cost_model": {
+    "name": "Builder Cost-of-Living Calculator",
+    "near_gas": "gas = avgTgasPerTx * 1e12; cost_NEAR = gas * gas_price_yocto / 1e24; USD = cost_NEAR * near_usd",
+    "near_storage": "locked_capital_NEAR = storage_MB * 1e6 * storage_amount_per_byte_yocto / 1e24. Storage is LOCKED capital, not spent, and is shown separately.",
+    "inference": "USD = tokens/day * 30 * (split * input_rate + (1-split) * output_rate) / 1e6",
+    "comparison": "Base/Ethereum: eth_gasPrice (wei) -> USD via ETH price. Solana: documented base fee (assumption) + live getMinimumBalanceForRentExemption rent, converted via SOL price.",
+    "cost_per_1000_actions": "monthly_total_usd / (agents * tx_per_agent_day * 30 / 1000)",
+    "priority": "NEAR P0 (fully implemented), Base/Solana P1"
+  },
+  "agent_health": {
+    "name": "Agent Economy Health Index",
+    "range": [0, 100],
+    "normalization": "Fixed bounds below. NEVER data-adaptive, so a historical number stays reproducible.",
+    "components": [
+      { "id": "activity", "weight": 0.20, "bound_low": 0, "bound_high": 1000, "unit": "agent-like accounts active in 24h", "source": "fleet + heuristic" },
+      { "id": "growth", "weight": 0.15, "bound_low": -0.25, "bound_high": 0.25, "unit": "fractional change in agent-like accounts vs 7d baseline" },
+      { "id": "capital", "weight": 0.20, "bound_low": -0.30, "bound_high": 0.30, "unit": "fractional change in aggregate cohort balance" },
+      { "id": "concentration", "weight": 0.15, "bound_low": 0, "bound_high": 1, "unit": "HHI of cohort balances; inverted (1-HHI) so lower concentration is healthier" },
+      { "id": "retention", "weight": 0.15, "bound_low": 0, "bound_high": 1, "unit": "share of accounts active in both windows" },
+      { "id": "fleet_liveness", "weight": 0.15, "bound_low": 0, "bound_high": 1, "unit": "share of registered Sentinel agents that published in the last 2 rounds" }
+    ],
+    "composite": "sum(weight_i * clamp01((value_i - bound_low_i)/(bound_high_i - bound_low_i)) * 100)",
+    "confidence": "coverage = observed cohort accounts / configured cohort accounts; weighted by confidence tier (measured=1.0, known=0.8, heuristic=0.4). Low coverage MUST render as low confidence, not as a low score.",
+    "what_this_is_not": "Not a price signal, not an investment metric, not a census of all agents, and not ground truth about account identity. See docs/METHODOLOGY.md."
+  }
+}

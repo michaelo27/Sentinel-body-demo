@@ -1,0 +1,9 @@
+{
+  "name": "sentinel-vault",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "vars": {"ALLOWED_ORIGIN": "https://REPLACE-WITH-YOUR-PROJECT.vercel.app"},
+  "d1_databases": [{"binding": "DB", "database_name": "sentinel-auth", "database_id": "REPLACE-WITH-D1-ID"}]
+}

@@ -1,0 +1,42 @@
+{
+  "$comment": "Agent Economy Health Index input cohorts. Confidence tiers are explicit; nothing here is presented as ground truth.",
+  "version": "v1",
+  "known": {
+    "label": "Known agent accounts",
+    "confidence": "known",
+    "accounts": [],
+    "source_url": null,
+    "status": "empty_no_verified_registry",
+    "note": "Intentionally empty: no mainnet agent registry/contract was verified on 2026-11-12. Add only accounts with a cited registry and a real view_account probe."
+  },
+  "heuristic": {
+    "label": "Heuristic agent-like accounts",
+    "confidence": "heuristic",
+    "status": "disabled_p1",
+    "method": "Bounded recent-block scan via https://mainnet.neardata.xyz/v0/block/{height} (free). Select accounts that call known agent/Intents contracts OR exhibit bot-like cadence with restricted function-call keys.",
+    "thresholds": {
+      "sample_blocks": 12,
+      "block_stride": 400,
+      "min_transactions_per_account": 3,
+      "regular_interarrival_cv_max": 0.25,
+      "function_call_key_method_count_max": 4,
+      "kind": "assumption",
+      "source_url": "https://mainnet.neardata.xyz/",
+      "rationale": "Fixed, published thresholds; never data-adaptive."
+    }
+  },
+  "fleet": {
+    "label": "Sentinel Fleet (testnet, fully real)",
+    "confidence": "measured",
+    "status": "primary_p0",
+    "network": "testnet",
+    "source_url": "https://test.rpc.fastnear.com",
+    "signals": [
+      "agent_count: nft_supply_for_owner enumeration over all minted Sentinels via the deployed NFT contract",
+      "balances: view_account per agent account",
+      "publish_cadence: snapshot commitments from latest_snapshot / snapshots views, keyed by agent_account",
+      "liveness: share of agents that published within the last 2 rounds"
+    ],
+    "note": "Before deployment, fleet signals are computed locally from the runtime keystore; the snapshot labels the mode."
+  }
+}

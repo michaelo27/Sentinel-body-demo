@@ -1,0 +1,56 @@
+{
+  "network": "testnet",
+  "created_at": "2026-11-13T16:49:39.519Z",
+  "nft_contract_id": "sntl-02e90eacb8.testnet",
+  "admin_account_id": "sntl-owner-02e90eacb8.testnet",
+  "genesis_worker_public_key": "ed25519:K9Lcg7cSGhNS7vsu4Y9zKDEPar5u9CBEzeTqVk46sPX",
+  "status": "deployed_and_genesis_minted",
+  "genesis_agent_account": "agent-0.sntl-02e90eacb8.testnet",
+  "genesis_mint_tx": "DebHTCy1NFyhpCpMXh9T17tuogKtiEc6JYvcuqnMSoaR",
+  "deployed_contract": {
+    "account_id": "sntl-02e90eacb8.testnet",
+    "wasm_bytes": 495343,
+    "deploy_tx": "45ceR2h4s2JntcxodkYCgqeDqktyLwDF4FD1DjG9KutC",
+    "admin_account_id": "sntl-owner-02e90eacb8.testnet",
+    "config": {
+      "contract_id": "sntl-02e90eacb8.testnet",
+      "admin": "sntl-owner-02e90eacb8.testnet",
+      "paused": false,
+      "next_token_id": 0,
+      "mint_cost_yocto": "2100980000000000000000000",
+      "controller_wasm_bytes": 143198,
+      "seed_balance_near": "1.79098",
+      "worker_allowance_near": "0.25",
+      "default_worker_key": "ed25519:K9Lcg7cSGhNS7vsu4Y9zKDEPar5u9CBEzeTqVk46sPX",
+      "min_publish_interval_seconds": 20,
+      "snapshot_limit": 50,
+      "gateway_base": "http://localhost:8787",
+      "storage_byte_cost_yocto": "10000000000000000000"
+    },
+    "explorer": "https://testnet.nearblocks.io/accounts/sntl-02e90eacb8.testnet"
+  },
+  "deployed_at": "2026-11-13T16:49:53.529Z",
+  "genesis_token_id": "0",
+  "genesis_owner": "sntl-owner-02e90eacb8.testnet",
+  "genesis_access_keys": [
+    {
+      "access_key": {
+        "nonce": 277536783000000,
+        "permission": {
+          "FunctionCall": {
+            "allowance": "250000000000000000000000",
+            "method_names": [
+              "publish_snapshot"
+            ],
+            "receiver_id": "sntl-02e90eacb8.testnet"
+          }
+        }
+      },
+      "public_key": "ed25519:K9Lcg7cSGhNS7vsu4Y9zKDEPar5u9CBEzeTqVk46sPX"
+    }
+  ],
+  "genesis_agent_balance_yocto": "1790980000000000000000000",
+  "gateway_url": "http://localhost:8787",
+  "near_sdk": "5.30.1",
+  "note": "All values above were read back from testnet RPC view calls after the transactions. Private keys live in keys/testnet.json (gitignored)."
+}

@@ -1,0 +1,88 @@
+{
+  "$comment": "ONLY accounts verified with a real view_account call on 2026-11-12 (docs/SOURCES.md section 3). Never add an account without a recorded probe.",
+  "verified_at": "2026-11-12T21:37:03Z",
+  "verification_method": "NEAR RPC query / view_account at finality=final",
+  "source_url": "https://free.rpc.fastnear.com",
+  "network": "mainnet",
+  "assets": {
+    "NEAR": { "unit": "yoctoNEAR", "decimals": 24, "method": "view_account", "source_url": "https://free.rpc.fastnear.com" },
+    "wNEAR": {
+      "contract": "wrap.near", "decimals": 24, "method": "ft_balance_of",
+      "ft_metadata_verified": { "spec": "ft-1.0.0", "name": "Wrapped NEAR fungible token", "symbol": "wNEAR", "decimals": 24 },
+      "source_url": "https://free.rpc.fastnear.com"
+    },
+    "USDC": {
+      "contract": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+      "decimals": 6, "method": "ft_balance_of",
+      "ft_metadata_verified": { "spec": "ft-1.0.0", "name": "USDC", "symbol": "USDC", "decimals": 6 },
+      "source_url": "https://developers.circle.com/stablecoins/usdc-contract-addresses",
+      "note": "Circle native USDC is a bare 64-hex implicit account, NOT <hex>.near. Appending .near is an invalid Account ID."
+    }
+  },
+  "cohorts": [
+    {
+      "id": "intents",
+      "label": "Intents / solver hub",
+      "category": "intents",
+      "accounts": ["intents.near"],
+      "assets": ["NEAR", "wNEAR", "USDC"],
+      "source_url": "https://api.fastnear.com/v1/account/intents.near/ft",
+      "verified_amount_yocto": "136971879571583972128222992171",
+      "confidence": "verified"
+    },
+    {
+      "id": "staking",
+      "label": "Liquid staking",
+      "category": "staking",
+      "accounts": ["linear-protocol.near", "meta-pool.near"],
+      "assets": ["NEAR"],
+      "source_url": "https://free.rpc.fastnear.com",
+      "verified_amounts_yocto": {
+        "linear-protocol.near": "1090577949341257332198561018882",
+        "meta-pool.near": "300320343038294524867833476886"
+      },
+      "confidence": "verified"
+    },
+    {
+      "id": "defi",
+      "label": "DeFi venues",
+      "category": "defi",
+      "accounts": ["v2.ref-finance.near", "dclv2.ref-labs.near", "contract.main.burrow.near"],
+      "assets": ["NEAR", "wNEAR", "USDC"],
+      "source_url": "https://free.rpc.fastnear.com",
+      "verified_amounts_yocto": {
+        "v2.ref-finance.near": "32621592611579940364399282125",
+        "dclv2.ref-labs.near": "9682707935395233870138433320",
+        "contract.main.burrow.near": "11022633142260863927307954794"
+      },
+      "confidence": "verified"
+    },
+    {
+      "id": "bridge",
+      "label": "Bridge / Aurora",
+      "category": "bridge",
+      "accounts": ["aurora"],
+      "assets": ["NEAR"],
+      "source_url": "https://free.rpc.fastnear.com",
+      "verified_amount_yocto": "145768497181409676817125837429",
+      "confidence": "verified"
+    },
+    {
+      "id": "treasury",
+      "label": "wNEAR reserve",
+      "category": "treasury",
+      "accounts": ["wrap.near"],
+      "assets": ["NEAR"],
+      "source_url": "https://free.rpc.fastnear.com",
+      "verified_amount_yocto": "36883827359146564749510166666663",
+      "confidence": "verified",
+      "note": "This is the wNEAR token contract's own account balance, used as a reserve proxy."
+    }
+  ],
+  "not_configured": [
+    {
+      "id": "agents",
+      "reason": "No mainnet agent-registry account was verifiably identified. Claiming one would be a hallucination. The Sentinel Fleet cohort (our own real testnet agents) is used instead."
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+'use client';
+import React from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { Activity, Clock3, Database, ExternalLink, RefreshCw, ShieldCheck } from 'lucide-react';
+import { CapitalFlow, CostOfLiving, HealthIndex } from './indices';
+import { ProofPanel, CommitmentStrip } from './proof-panel';
+import { Card, Chip, Badge, TimeAgo, absoluteTime, shortHash, HashRow, Skeleton, EmptyState } from './ui';
+import { useJson, explorerTx } from '@/lib/api';
+
+const ease = [0.22, 1, 0.36, 1] as const;
+
+export function FreshnessBar({ delivery, snapshot, commitment }: { delivery: any; snapshot: any; commitment: any }) {
+  return (
+    <div className="card" style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center', padding: '15px 20px', marginBottom: 18 }}>
+      <span className="chip chip-green"><span className="dot dot-live" />LIVE HOLDER TIER</span>
+      <Chip><Clock3 size={11} /> age <TimeAgo iso={snapshot?.epoch_ts} /></Chip>
+      <Chip><Database size={11} /> {delivery?.observed_network} observe → {delivery?.settled_network} settle</Chip>
+      <Chip>{snapshot?.inputs?.queries?.length || 0} real queries</Chip>
+      {delivery?.stale && <Badge kind="stale">STALE · LAST REAL SNAPSHOT</Badge>}
+      {delivery?.replay && <Badge kind="replay">REPLAY OF RECORDED REAL DATA</Badge>}
+      <Chip>{snapshot?.methodology_version || 'v1'}</Chip>
+      <span className="tiny tertiary mono" style={{ marginLeft: 'auto' }} title={absoluteTime(snapshot?.epoch_ts)}>{snapshot?.epoch_ts}</span>
+      <Link href="/proof" className="btn btn-ghost btn-sm"><ShieldCheck size={13} /> Proof</Link>
+    </div>
+  );
+}
+
+export function HistoryTable() {
+  const h = useJson<any>('/api/vault/history', { intervalMs: 60000 });
+  return (
+    <Card className="col-12" title="Vault history · every real committed snapshot" right={<div style={{ display: 'flex', gap: 6 }}><Chip>{h.data?.items?.length || 0} snapshots</Chip><button className="btn btn-ghost btn-sm" onClick={h.refresh} aria-label="Refresh history"><RefreshCw size={13} /></button></div>}>
+      {h.loading && !h.data ? <div style={{ display: 'grid', gap: 10 }}><Skeleton h={30} /><Skeleton h={30} /><Skeleton h={30} /></div> : h.error ? <EmptyState title="History unavailable" body={h.error} /> : (h.data?.items?.length ? (
+        <div style={{ overflowX: 'auto' }}>
+          <table className="table">
+            <thead><tr><th>Snapshot</th><th>Observed</th><th>Content hash</th><th>Commitment tx</th><th>Mode</th><th>Verify</th></tr></thead>
+            <tbody>{h.data.items.map((x: any) => <tr key={x.id}>
+              <td style={{ color: 'var(--cyan)' }}>{shortHash(x.id, 18)}</td>
+              <td><TimeAgo iso={x.epoch_ts} /></td>
+              <td style={{ color: 'var(--cyan)' }}>{shortHash(x.content_hash, 12)}</td>
+              <td>{x.tx ? <a href={explorerTx(x.tx)} target="_blank" rel="noreferrer" style={{ color: 'var(--green)' }}>{shortHash(x.tx, 10)} <ExternalLink size={10} style={{ verticalAlign: -1 }} /></a> : '—'}</td>
+              <td><span className={`chip ${x.mode === 'live' ? 'chip-green' : 'chip-violet'}`}>{x.mode}{x.stale ? ' · stale' : ''}</span></td>
+              <td><Link href={`/verify?q=${encodeURIComponent(x.id)}`} className="btn btn-ghost btn-sm">Verify</Link></td>
+            </tr>)}</tbody>
+          </table>
+        </div>) : <EmptyState title="No history yet" body="The first agent round will appear here after its snapshot is committed on-chain." />)}
+    </Card>
+  );
+}
+
+export function VaultDashboard({ vault }: { vault: any }) {
+  const s = vault?.snapshot; const d = vault?.delivery; const c = vault?.commitment;
+  if (!s) return <div className="wrap section"><Card><EmptyState title="Vault is empty" body="No snapshot has been committed yet. Run pnpm agent:run to perform a real data round." /></Card></div>;
+  return (
+    <div className="wrap" style={{ paddingTop: 42, paddingBottom: 40 }}>
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .5, ease }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 24 }}>
+          <div>
+            <span className="eyebrow">Full-resolution live intelligence</span>
+            <h1 className="h2" style={{ marginTop: 10 }}>The vault is <span className="serif" style={{ color: 'var(--green)' }}>open.</span></h1>
+            <p className="small muted" style={{ marginTop: 10, maxWidth: 610, lineHeight: 1.6 }}>{s.snapshot_id} · {s.inputs?.queries?.length || 0} source queries pinned to real block heights · published by {c?.publisher_account || s.meta?.agent_account}</p>
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><Link href="/agent/0" className="btn btn-ghost btn-sm"><Activity size={13} /> Agent console</Link><Link href="/proof" className="btn btn-primary btn-sm"><ShieldCheck size={13} /> Proof panel</Link></div>
+        </div>
+        <FreshnessBar delivery={d} snapshot={s} commitment={c} />
+      </motion.div>
+
+      <div className="bento" style={{ rowGap: 16 }}>
+        <CapitalFlow flow={s.capital_flow} blocks={s.inputs?.blocks} />
+        <CostOfLiving initial={s.cost_of_living} />
+        <HealthIndex health={s.agent_health} />
+        <ProofPanel snapshotId={s.snapshot_id} fullSnapshot={s} commitment={c} />
+        <HistoryTable />
+        <Card className="col-6" title="Provenance & pinned heights">
+          {Object.entries(s.inputs?.blocks || {}).map(([k, v]: any) => <div className="kv" key={k}><span className="kv-k">{k}</span><span className="kv-v">{Number(v).toLocaleString()}</span></div>)}
+          <div className="kv"><span className="kv-k">Price source</span><span className="kv-v" style={{ maxWidth: 260, wordBreak: 'break-all' }}>{s.inputs?.prices?.price_source}</span></div>
+          <div className="kv"><span className="kv-k">Price observed</span><span className="kv-v">{new Date((s.inputs?.prices?.price_observed_at || 0) * 1000).toUTCString()}</span></div>
+          <div className="kv"><span className="kv-k">Queries</span><span className="kv-v">{s.inputs?.queries?.length} · {s.inputs?.queries?.filter((q: any) => q.status === 'ok').length} ok</span></div>
+          <details style={{ marginTop: 14 }}><summary className="small muted" style={{ cursor: 'pointer' }}>Show every query ({s.inputs?.queries?.length})</summary>
+            <div style={{ marginTop: 12, maxHeight: 230, overflow: 'auto' }}>
+              {s.inputs?.queries?.map((q: any, i: number) => <div key={i} className="tiny tertiary mono" style={{ padding: '4px 0', borderBottom: '1px solid var(--border)' }}>{q.status === 'ok' ? '✓' : q.status} {q.id} · {q.url} · digest {q.response_digest}{q.block_height ? ` · block ${q.block_height}` : ''}</div>)}
+            </div>
+          </details>
+        </Card>
+        <Card className="col-6" title="What is measured, what is assumed">
+          {(s.meta?.notes || []).map((n: string, i: number) => <div key={i} className="small muted" style={{ lineHeight: 1.6, padding: '7px 0', borderBottom: '1px solid var(--border)' }}>· {n}</div>)}
+          {(s.cost_of_living?.assumptions_used || []).map((a: string, i: number) => <div key={i} className="tiny tertiary mono" style={{ padding: '5px 0' }}>· {a}</div>)}
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 14 }}><Badge kind="fact">Live RPC values</Badge><Badge kind="measured">Measured on-chain</Badge><Badge kind="assumption">Labelled estimates</Badge></div>
+          <p className="tiny tertiary" style={{ lineHeight: 1.6, marginTop: 14 }}>If a free source fails, the runtime serves the last real snapshot with a visible STALE badge. It never fabricates or silently synthesizes a number.</p>
+          <div style={{ marginTop: 14 }}><HashRow label="Snapshot hash" value={c?.content_hash} /><HashRow label="Commitment tx" value={c?.commitment_tx} href={c?.explorer_url} /></div>
+        </Card>
+      </div>
+    </div>
+  );
+}

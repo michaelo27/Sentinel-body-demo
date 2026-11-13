@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "checked_at": "2026-11-13T08:18:09.806Z",
+  "steps": [
+    "landing + mobile",
+    "browser WebCrypto re-verify MATCH",
+    "holder vault dashboard",
+    "restricted agent key console",
+    "public verifier"
+  ],
+  "errors": []
+}

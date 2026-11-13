@@ -1,0 +1,46 @@
+# ---- NEVER COMMIT KEYS ----
+keys/
+*.key.json
+.env
+.env.local
+.env.*.local
+deployments/*.key.json
+services/agent/.keystore/
+*.pem
+
+# dependencies / build output
+node_modules/
+.turbo/
+.next/
+dist/
+build/
+target/
+out/
+*.tsbuildinfo
+coverage/
+.vitest/
+.pnpm-store/
+
+# runtime data (recorded real snapshots ARE committed on purpose; see data/snapshots/README.md)
+data/*.sqlite
+data/*.sqlite-*
+data/vault.db
+data/logs/
+*.log
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Hosted source excludes local credentials and private migration state
+.wrangler/
+.dev.vars
+.env*
+!.env.example
+keys/
+*PRIVATE*
+
+# Exclude optional CI workflow from this hosting repository
+.github/workflows/ci.yml
