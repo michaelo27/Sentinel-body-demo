@@ -2,6 +2,7 @@ import { watchApi, runScheduled } from './watchlist';
 import { aiApi } from './ai-analysis';
 import { agentReportApi } from './agent-reports';
 import { investigate } from './investigate';
+import { missionApi } from './missions';
 import { Buffer } from 'node:buffer';
 import { hashSnapshot } from '../../packages/core/src/hash-node';
 import { isValidContentHash } from '../../packages/core/src/canonical';
@@ -328,6 +329,10 @@ export default {
    if(['/auth/challenge','/auth/verify','/api/auth/challenge','/api/auth/verify'].includes(url.pathname)){
     if(request.method!=='POST')throw new HttpError(405,'POST required.');
     return json(await auth(url.pathname,request,body,env));
+   }
+   if(['/api/missions/state','/api/missions/profile','/api/missions/collect','/api/missions/open','/api/missions/review','/api/missions/analyze'].includes(url.pathname)){
+    const session=await guardRequest(Object.fromEntries(request.headers),env);
+    return json(await missionApi(url.pathname,request.method,body,session.accountId,env));
    }
    if(url.pathname==='/api/investigate'){
     if(request.method!=='POST')throw new HttpError(405,'POST required.');

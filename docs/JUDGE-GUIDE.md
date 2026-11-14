@@ -27,6 +27,14 @@ Do not treat coloured balance bands as transfer paths, TVL changes as proven cap
 
 If an RPC or explorer is unavailable, record that failure and retry a read later. A network error is not a passing verification. The checker never silently invents an observation or retries a signed transaction.
 
+## New mission-desk review (MIS01 source update)
+
+After the additive migration, Worker deployment and frontend deployment, authenticate and open the Investigation Desk with an NFT you currently own. Collect evidence first: no model call is made. Inspect its readable facts, tool log and source notebook. Explicitly consent to AI only if you want a new synthesis. Reopen completed cases without another model charge.
+
+Personal missions require saved watch selections and real observations; mark a personal case reviewed to establish the next comparison baseline. Ecosystem missions separate TVL, DEX-only volume, broader activity and revenue. An account mission's recent indexer sample is not a full ledger or a proven cause of a balance drop. Private cases do not transfer to another holder with the NFT.
+
+The mission schema is not accepted by the old publication tool. Do not submit a case export to the local publisher or call it an on-chain report. See [BUDDY-MISSIONS.md](BUDDY-MISSIONS.md). New prompt/model quality and production CPU remain acceptance checks; mocked model tests do not prove live inference.
+
 ## Judge path B: holder demonstration
 
 A holder wallet is required. The existing successful report belongs to `michaelomario.testnet`; its private payload is not exposed to all visitors. Do not ask for organizer signing keys.

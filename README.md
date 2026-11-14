@@ -45,6 +45,23 @@ Sentinel Buddies separates those responsibilities:
 
 ## What your buddy unlocks
 
+### Buddy Investigation Desk — tool-assisted missions
+
+The MIS01 source update adds three practical capabilities without removing the existing intelligence tools:
+
+1. **Investigate an account or transaction:** gather finalized state/permissions or transaction execution, compare a previous saved key check when available, inspect watched balance evidence and collect a bounded recent activity sample. Ask AI to turn these sources into findings, unresolved questions and next checks.
+2. **Remember my priorities:** save selected watches, reporting focus and style for your buddy. A personal briefing compares recorded balances and the latest briefing you explicitly marked reviewed. It is on demand, not scheduled AI monitoring.
+3. **Brief me on NEAR:** gather TVL history, tracked DEX versus broader trading activity and covered revenue, then request an evidence-linked ecosystem explanation.
+
+**Two steps, clear consent:** collect evidence without an AI charge; inspect recorded facts, source gaps and the tool log; then explicitly request AI synthesis. Reopen a completed case without another model call. Cases and preferences are private to the creating holder and selected NFT; a new NFT owner does not inherit private history.
+
+The model explains evidence gathered by a bounded server plan. It does not freely browse, hold signing keys, trade or invent missing history. NearBlocks provides at most five recent activity records, not a complete ledger or proof of a balance drop's cause. The existing AI quota is shared with missions, not increased. Exact provider cost must be checked in provider billing; reported token usage appears in the case.
+
+**Deployment/evidence status:** implemented and tested locally, including live read-only source collection; production deployment and live inference for the new prompt still require confirmation. Private case JSON is not an AG01 publication packet. The existing watch-report publication flow remains unchanged; mission cases are not claimed as on-chain publications.
+
+See [Buddy missions: use, privacy, limits and deployment](docs/BUDDY-MISSIONS.md) for the full walkthrough and source map.
+
+
 ### 1. Investigate before you guess
 
 Enter a NEAR account or transaction in the Vault. The read-only investigator explains what the chain records; it does not ask AI to invent a transaction story.
