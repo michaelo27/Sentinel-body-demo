@@ -30,7 +30,7 @@ export function PublicTeaser({ compact = false }: { compact?: boolean }) {
       </Card>
       <Card className="col-5 locked" style={{ padding: 26, minHeight: 300 }}>
         <div className="locked-blur" style={{ display: 'grid', gap: 14 }}><div className="card-title">FULL RESOLUTION</div><div className="num" style={{ fontSize: 34 }}>+444,331.42</div>{[88, 70, 92, 60, 80].map((w, i) => <div key={i} className="skeleton" style={{ height: i === 4 ? 60 : 16, width: `${w}%` }} />)}</div>
-        <div className="locked-overlay"><Lock size={22} color="var(--green)" /><h3 className="h3">Live tier is locked</h3><p className="small muted" style={{ maxWidth: 250, textAlign: 'center', lineHeight: 1.6, margin: 0 }}>Hold a Sentinel Body, prove ownership, unlock every query and pinned block.</p><Link href="/mint" className="btn btn-primary btn-sm">Unlock <ArrowRight size={13} /></Link></div>
+        <div className="locked-overlay"><Lock size={22} color="var(--green)" /><h3 className="h3">Live tier is locked</h3><p className="small muted" style={{ maxWidth: 250, textAlign: 'center', lineHeight: 1.6, margin: 0 }}>Hold a Sentinel Buddies, prove ownership, unlock every query and pinned block.</p><Link href="/mint" className="btn btn-primary btn-sm">Unlock <ArrowRight size={13} /></Link></div>
       </Card>
       {c?.content_hash && <Card className="col-12" style={{ padding: '16px 20px', display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
         <ShieldCheck size={17} color="var(--green)" /><span className="small muted">The live hash is public immediately, even while the data is gated:</span>

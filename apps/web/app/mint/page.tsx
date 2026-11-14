@@ -96,7 +96,7 @@ export default function MintPage() {
   return (
     <div className="wrap" style={{ paddingTop: 48, paddingBottom: 40 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-        <div><span className="eyebrow">Agent-account birth</span><h1 className="h2" style={{ marginTop: 10 }}>Mint a body. <span className="serif" style={{ color: 'var(--green)' }}>Watch it wake up.</span></h1><p className="lead" style={{ maxWidth: 680, marginTop: 12 }}>One payable transaction creates a real NEAR subaccount, deploys a controller, funds the agent and gives it exactly one restricted worker key. Then prove ownership and the vault opens.</p></div>
+        <div><span className="eyebrow">Agent-account birth</span><h1 className="h2" style={{ marginTop: 10 }}>Mint a buddy. <span className="serif" style={{ color: 'var(--green)' }}>Watch it wake up.</span></h1><p className="lead" style={{ maxWidth: 680, marginTop: 12 }}>One payable transaction creates a real NEAR subaccount, deploys a controller, funds the agent and gives it exactly one restricted worker key. Then prove ownership and the vault opens.</p></div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><Chip tone="green"><span className="dot dot-live" />NEAR TESTNET</Chip><Chip>FREE FAUCET NEAR</Chip></div>
       </div>
 
@@ -126,13 +126,13 @@ export default function MintPage() {
             </div>
 
             {!mint ? <>
-              <div className="card-title" style={{ margin: '24px 0 10px' }}>Step 2 · Mint Sentinel Body #{nextId ?? '…'}</div>
+              <div className="card-title" style={{ margin: '24px 0 10px' }}>Step 2 · Mint Sentinel Buddies #{nextId ?? '…'}</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 10, marginBottom: 16 }}>
                 <div className="card-surface" style={{ padding: 13, borderRadius: 12, border: '1px solid var(--border)' }}><div className="card-title">Mint deposit</div><div className="num" style={{ fontSize: 21, marginTop: 6 }}>{cost?.toFixed?.(5) || '—'} <span className="tiny">NEAR</span></div><div className="tiny tertiary" style={{ marginTop: 4 }}>free testnet tokens</div></div>
                 <div className="card-surface" style={{ padding: 13, borderRadius: 12, border: '1px solid var(--border)' }}><div className="card-title">Controller wasm</div><div className="num" style={{ fontSize: 21, marginTop: 6 }}>{quote.data?.breakdown?.controller_wasm_bytes?.toLocaleString() || '—'} <span className="tiny">B</span></div><div className="tiny tertiary" style={{ marginTop: 4 }}>optimized · parent only</div></div>
                 <div className="card-surface" style={{ padding: 13, borderRadius: 12, border: '1px solid var(--border)' }}><div className="card-title">Worker allowance</div><div className="num" style={{ fontSize: 21, marginTop: 6 }}>{quote.data?.breakdown?.worker_allowance_near || '—'} <span className="tiny">NEAR</span></div><div className="tiny tertiary" style={{ marginTop: 4 }}>publish_snapshot only</div></div>
               </div>
-              <button className="btn btn-primary" onClick={doMint} disabled={busy || cost == null}><Sparkles size={16} /> {busy ? 'Creating agent account…' : `Mint Sentinel Body #${nextId ?? '…'}`}</button>
+              <button className="btn btn-primary" onClick={doMint} disabled={busy || cost == null}><Sparkles size={16} /> {busy ? 'Creating agent account…' : `Mint Sentinel Buddies #${nextId ?? '…'}`}</button>
               {birthStep >= 0 && <div style={{ marginTop: 20 }}>
                 {BIRTH.map((x, i) => <motion.div key={x.t} initial={{ opacity: .35 }} animate={{ opacity: i <= birthStep ? 1 : .35 }} style={{ display: 'flex', gap: 12, padding: '9px 0', position: 'relative' }}>
                   {i < BIRTH.length - 1 && <span className="step-line" style={{ left: 11, top: 26, bottom: 0 }} />}

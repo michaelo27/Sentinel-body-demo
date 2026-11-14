@@ -29,7 +29,7 @@ export function Nav() {
       <div className="wrap" style={{ height: 64, display: 'flex', alignItems: 'center', gap: 24 }}>
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 11, flex: '0 0 auto' }}>
           <span className="brand-mark" aria-hidden="true" />
-          <span className="brand-name">Sentinel<span style={{ color: 'var(--green)' }}> Body</span></span>
+          <span className="brand-name">Sentinel<span style={{ color: 'var(--green)' }}> Buddies</span></span>
         </Link>
 
         <nav aria-label="Primary" style={{ gap: 4, flex: 1 }} className="desktop-only">

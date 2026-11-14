@@ -25,11 +25,11 @@ export default function AgentPage() {
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><Link href="/vault" className="btn btn-ghost btn-sm">Holder vault</Link><Link href="/proof" className="btn btn-primary btn-sm"><ShieldCheck size={13} /> Proof</Link></div>
       </div>
 
-      {a.loading && !d ? <div className="bento"><Card className="col-12"><div style={{ display: 'grid', gap: 12 }}><Skeleton h={40} /><Skeleton h={80} /><Skeleton h={60} /></div></Card></div> : a.error || d?.error ? <Card><EmptyState title="Agent not found" body={a.error || d?.error} action={<Link href="/mint" className="btn btn-primary">Mint a Sentinel Body</Link>} /></Card> : (
+      {a.loading && !d ? <div className="bento"><Card className="col-12"><div style={{ display: 'grid', gap: 12 }}><Skeleton h={40} /><Skeleton h={80} /><Skeleton h={60} /></div></Card></div> : a.error || d?.error ? <Card><EmptyState title="Agent not found" body={a.error || d?.error} action={<Link href="/mint" className="btn btn-primary">Mint a Sentinel Buddies</Link>} /></Card> : (
         <div className="bento" style={{ rowGap: 16 }}>
           <Card className="col-4" style={{ padding: 26, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
             <AgentArt tokenId={id} size={210} />
-            <h2 className="h3" style={{ marginTop: 20 }}>Sentinel Body #{id}</h2>
+            <h2 className="h3" style={{ marginTop: 20 }}>Sentinel Buddies #{id}</h2>
             <div className="mono tiny" style={{ color: 'var(--cyan)', marginTop: 6, wordBreak: 'break-all' }}>{d.agent_account}</div>
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center', marginTop: 14 }}>
               <Chip tone="green"><span className="dot dot-live" />{d.commitments?.length || 0} PUBLISHES</Chip>

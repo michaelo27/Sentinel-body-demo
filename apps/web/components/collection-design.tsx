@@ -32,7 +32,7 @@ export function Journey() {
 }
 export function CollectionFAQ() {
   return <section className="collect-section wrap faq-section"><SectionHeading label="GOOD QUESTIONS" title="Know what you own."/><div>{[
-    ['What is Sentinel Body?','A testnet NFT linked to an agent account and holder-gated intelligence. A separate off-chain worker collects and computes data.'],
+    ['What is Sentinel Buddies?','A testnet NFT linked to an agent account and holder-gated intelligence. A separate off-chain worker collects and computes data.'],
     ['Is this the on-chain NFT image?','The Collection gallery reads registered artwork and token metadata from testnet. Each registered ID has distinct artwork. Decorative illustrations and lookup cards may still use the shared website character. Artwork follows the NFT when transferred; image hosting on Vercel is not guaranteed permanent.'],
     ['Does connecting unlock the vault?','No. Wallet connection and verified NFT ownership are different steps. The receipt shortcut is disabled; wallet compatibility is still being validated.'],
     ['Are these investment or staking products?','No. This prototype has no promised returns, staking rewards or token yield. Analytics are limited measurements, not investment advice.'],
