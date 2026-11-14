@@ -30,7 +30,7 @@ export default function VerifyPage() {
       <p className="lead" style={{ maxWidth: 680, marginTop: 12 }}>Paste a snapshot ID or a 64-character content hash. The contract commitment is public immediately; the full-resolution snapshot becomes public after the delay so the hash can be recomputed locally.</p>
 
       <Card style={{ marginTop: 26, padding: 20 }}>
-        <form onSubmit={(e) => { e.preventDefault(); setSubmitted(q.trim()); }} style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <form onSubmit={(e) => { e.preventDefault(); if (q.trim() === submitted) { void result.refresh(); } else { setSubmitted(q.trim()); } }} style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <div style={{ position: 'relative', flex: 1, minWidth: 260 }}>
             <Search size={16} style={{ position: 'absolute', left: 13, top: 14, color: 'var(--text-3)' }} />
             <input className="input" style={{ paddingLeft: 38 }} placeholder="snap-… or 64-char content hash" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Snapshot ID or content hash" />
@@ -47,7 +47,7 @@ export default function VerifyPage() {
         <Card className="col-5" title="Server-side lookup (untrusted convenience)">
           {result.loading && !result.data ? <div style={{ display: 'grid', gap: 10 }}><Skeleton h={24} /><Skeleton h={24} /><Skeleton h={24} /></div> : result.data?.found ? <>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}><Chip tone={result.data.matches ? 'green' : 'violet'}>{result.data.matches ? <Check size={11} /> : null}{result.data.matches ? 'SERVER HASH MATCH' : 'COMMITMENT FOUND'}</Chip><Chip>{result.data.source}</Chip></div>
-            <HashRow label="Snapshot ID" value={c?.id || null} />
+            <HashRow label="Snapshot ID" value={c?.id || snapshotId || null} />
             <HashRow label="Content hash" value={c?.content_hash || null} />
             <HashRow label="Publisher" value={c?.agent_account || null} href={c?.agent_account ? `https://testnet.nearblocks.io/accounts/${c.agent_account}` : undefined} />
             {result.data.recomputed_hash && <HashRow label="Vault recompute" value={result.data.recomputed_hash} />}
@@ -57,6 +57,7 @@ export default function VerifyPage() {
             <div className="kv"><span className="kv-k">Full data public</span><span className="kv-v">{String(result.data.public_after_delay)}</span></div>
             {!result.data.public_after_delay && <p className="tiny tertiary" style={{ lineHeight: 1.6, marginTop: 12 }}>This snapshot is still inside the delay window. The hash is checkable on-chain now; the full JSON will be released later. Holder sessions can verify immediately after proving ownership.</p>}
           </> : result.data ? <EmptyState title="No matching commitment" body={result.data.error || 'Check the ID or hash and try again.'} /> : <EmptyState title="Enter a snapshot ID" body="The verifier reads the contract view and the released vault snapshot." />}
+          {result.updatedAt && <p className="tiny tertiary" role="status">Lookup completed: {new Date(result.updatedAt).toLocaleTimeString()}</p>}
           <p className="tiny tertiary" style={{ marginTop: 14, marginBottom: 0 }}>This server result is for convenience only. Use the browser panel to recompute the hash yourself from the released JSON bytes.</p>
         </Card>
         <ProofPanel snapshotId={snapshotId} commitment={c ? { ...c, block_heights: heights } : undefined} />

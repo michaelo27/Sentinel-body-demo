@@ -1,3 +1,4 @@
+import { watchApi, runScheduled } from './watchlist';
 import { Buffer } from 'node:buffer';
 import { hashSnapshot } from '../../packages/core/src/hash-node';
 import { isValidContentHash } from '../../packages/core/src/canonical';
@@ -209,11 +210,12 @@ app.get('/api/public/verify', async (req) => {
     if (c) return { found: true, source: 'on-chain', commitment: c, vault_snapshot: null, note: 'The commitment is public; the full snapshot is released after the public delay.' };
     return { found: false, error: 'No commitment matches that ID or hash.' };
   }
+  const chain = await testPool.viewFunction<any>(contractId, 'snapshot_by_id', { id: s.snapshot_id });
   return {
     found: true, source: 'vault',
-    commitment: commitmentOf(s),
+    commitment: { ...commitmentOf(s), id: s.snapshot_id, agent_account: s.proof?.publisher_account, ...(chain || {}) },
     recomputed_hash: hashSnapshot(s),
-    matches: hashSnapshot(s) === s.proof?.content_hash,
+    matches: !!chain && hashSnapshot(s) === chain.content_hash && chain.content_hash === s.proof?.content_hash,
     public_after_delay: store.isPublic(s.snapshot_id, CFG.publicDelayMinutes),
     vault_snapshot: store.isPublic(s.snapshot_id, CFG.publicDelayMinutes) ? publicView(s) : null,
   };
@@ -303,6 +305,7 @@ app.get('/api/nft/:id/art.svg', async (req, reply) => {
 }
 
 export default {
+ async scheduled(_event:any,env:any,ctx:any){ctx.waitUntil(runScheduled(env));},
  async fetch(request:Request,env:any):Promise<Response>{
   const headers:Record<string,string>={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Vary':'Origin'};
   const origin=request.headers.get('Origin');
@@ -322,6 +325,10 @@ export default {
    if(['/auth/challenge','/auth/verify','/api/auth/challenge','/api/auth/verify'].includes(url.pathname)){
     if(request.method!=='POST')throw new HttpError(405,'POST required.');
     return json(await auth(url.pathname,request,body,env));
+   }
+   if(['/api/watchlist','/api/watchlist/remove'].includes(url.pathname)){
+    const session=await guardRequest(Object.fromEntries(request.headers),env);
+    return json(await watchApi(url.pathname,request.method,body,session.accountId,env));
    }
    if(url.pathname.startsWith('/admin/')||url.pathname.startsWith('/api/demo/')||url.pathname==='/api/auth/attest-receipt')throw new HttpError(410,'Disabled on the hosted saved-snapshot demo.');
    const app:any={routes:[],get(p:string,h:any){this.routes.push(['GET',p,h]);},post(p:string,h:any){this.routes.push(['POST',p,h]);}};

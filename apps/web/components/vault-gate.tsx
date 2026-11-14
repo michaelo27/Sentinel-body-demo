@@ -25,7 +25,8 @@ const STEPS = [
 
 export function VaultGate({ children, title = 'Holder vault', compact = false }: { children: (vault: any) => React.ReactNode; title?: string; compact?: boolean }) {
   const s = useSentinel();
-  const { stage, result, prove } = useOwnershipProof();
+  const { stage, result, prove, reset } = useOwnershipProof();
+  useEffect(() => { reset(); }, [s.accountId]);
   const [custom, setCustom] = useState('');
   const [busy, setBusy] = useState(false);
   const [revoked, setRevoked] = useState(false);
@@ -62,7 +63,7 @@ export function VaultGate({ children, title = 'Holder vault', compact = false }:
     if (r.error) toast.error(r.error); else toast.success(`Ownership proven via ${r.method}. Vault unlocked.`);
   };
 
-  const stepIndex = stage === 'error' ? 2 : Math.max(0, STEPS.findIndex((x) => x.key === stage));
+  const stepIndex = !s.accountId ? 0 : stage === 'error' ? 2 : Math.max(0, STEPS.findIndex((x) => x.key === stage));
 
   return (
     <section className="wrap section" style={compact ? { paddingTop: 40 } : undefined}>
@@ -82,16 +83,7 @@ export function VaultGate({ children, title = 'Holder vault', compact = false }:
           {!s.accountId ? <>
             <div className="card-title" style={{ marginBottom: 12 }}>1 · Connect a testnet wallet</div>
             <button className="btn btn-primary" onClick={doWallet} disabled={busy || s.connecting}><Wallet size={16} /> {busy || s.connecting ? 'Connecting…' : 'Connect wallet (Meteor-friendly)'}</button>
-            <div className="hairline" style={{ margin: '24px 0' }} />
-            <div className="card-title" style={{ marginBottom: 8 }}>No wallet? Use the real on-chain demo path</div>
-            <p className="small muted" style={{ lineHeight: 1.6, marginTop: 0 }}>These are real free testnet accounts created by the organizer. The ownership proof is still a real <span className="mono tiny">attest_holder</span> transaction, clearly badged as a demo session.</p>
-            <div style={{ display: 'grid', gap: 8, marginTop: 14 }}>
-              {DEMO_ACCOUNTS.map((a) => <button key={a.id} className="btn btn-ghost" style={{ justifyContent: 'space-between' }} onClick={() => doDemo(a.id)} disabled={busy}>
-                <span style={{ display: 'flex', gap: 10, alignItems: 'center' }}><span className="orb-frame" style={{ width: 20, height: 20, background: 'radial-gradient(circle at 30% 30%,#00EC97,#063C33)' }} /><span>{a.label}</span></span>
-                <span className="mono tiny tertiary">{a.id}</span>
-              </button>)}
-              <div style={{ display: 'flex', gap: 8 }}><input className="input" placeholder="custom-account.testnet" value={custom} onChange={(e) => setCustom(e.target.value)} aria-label="Custom testnet account" /><button className="btn btn-ghost" onClick={() => doDemo(custom.trim())} disabled={!custom.trim() || busy}>Use</button></div>
-            </div>
+            <p className="small muted" style={{marginTop:20}}>The hosted demo supports wallet ownership proof only. Organizer demo-account login is disabled.</p>
           </> : <>
             <div className="card-surface" style={{ padding: 16, borderRadius: 12, border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
               <div><div className="card-title">Connected account</div><div className="mono small" style={{ marginTop: 5 }}>{s.accountId}</div></div>
@@ -105,7 +97,7 @@ export function VaultGate({ children, title = 'Holder vault', compact = false }:
             </div>
             {result.error && <p className="small" style={{ color: 'var(--rose)', marginTop: 12 }} role="alert">{result.error}</p>}
             {result.tx && <div style={{ marginTop: 12, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}><Chip tone="green"><Check size={11} /> REAL PROOF TX</Chip><span className="mono tiny">{shortHash(result.tx, 12)}</span><a href={result.explorer_url} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm"><ExternalLink size={12} /> Explorer</a></div>}
-            <div className="tiny tertiary" style={{ marginTop: 16, lineHeight: 1.6 }}>Wallet path: NEP-413 <span className="mono">signMessage</span> with a full-access key, verified against <span className="mono">view_access_key</span>. Fallback: an <span className="mono">attest_holder</span> transaction whose receipt emits a nonce-matched NEP-297 event. No gas is spent on the signature path.</div>
+            <div className="tiny tertiary" style={{ marginTop: 16, lineHeight: 1.6 }}>Wallet path: NEP-413 <span className="mono">signMessage</span> with a full-access key, verified against <span className="mono">view_access_key</span>. Client-supplied receipt authentication is disabled on the hosted gateway. No gas is spent on the signature path.</div>
           </>}
         </Card>
 

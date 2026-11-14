@@ -75,13 +75,13 @@ export function CapitalFlow({ flow, blocks }: { flow: any; blocks?: Record<strin
         <div className="col-5" style={{ minWidth: 0 }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0,1fr))', gap: 12, marginBottom: 14 }}>
             <div className="card-surface" style={{ padding: 14, borderRadius: 12, border: '1px solid var(--border)' }}>
-              <div className="card-title" style={{ marginBottom: 8 }}>24h net · NEAR</div>
+              <div className="card-title" style={{ marginBottom: 8 }}>Observed net change · NEAR</div>
               <div className="num" style={{ fontSize: 25, color: (flow?.total_net_near || 0) >= 0 ? 'var(--green)' : 'var(--rose)' }}>
                 {(flow?.total_net_near || 0) >= 0 ? '+' : ''}<CountUp value={flow?.total_net_near || 0} digits={2} />
               </div>
             </div>
             <div className="card-surface" style={{ padding: 14, borderRadius: 12, border: '1px solid var(--border)' }}>
-              <div className="card-title" style={{ marginBottom: 8 }}>24h net · USD</div>
+              <div className="card-title" style={{ marginBottom: 8 }}>Observed net change · USD</div>
               <div className="num" style={{ fontSize: 25, color: (flow?.total_net_usd || 0) >= 0 ? 'var(--green)' : 'var(--rose)' }}>
                 {(flow?.total_net_usd || 0) >= 0 ? '+' : ''}$<CountUp value={flow?.total_net_usd || 0} digits={0} />
               </div>
