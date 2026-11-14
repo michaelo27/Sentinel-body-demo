@@ -95,10 +95,10 @@ export function costModel(scenario: Scenario, live: LiveParams, assumptions: Ass
 
   // --- Comparison chains (P1). Gas prices are live; gas-units-per-action is an assumption.
   const evmCost = (wei: string, usd: number) =>
-    actionsPerMonth * (a.evmGasUnitsPerAction * Number(wei)) / WEI_PER_ETH * usd + s.infraUsdPerMonth;
+    actionsPerMonth * (a.evmGasUnitsPerAction * Number(wei)) / WEI_PER_ETH * usd + inferenceUsd + s.infraUsdPerMonth;
   const solPerActionSol = (a.solSignaturesPerAction * live.solBaseFeeLamports) / LAMPORTS_PER_SOL;
   const solRentSol = (s.agents * a.solAccountsPerAgent * live.solRentLamports128b) / LAMPORTS_PER_SOL;
-  const solMonthlyUsd = actionsPerMonth * solPerActionSol * live.solUsd + solRentSol * live.solUsd + s.infraUsdPerMonth;
+  const solMonthlyUsd = actionsPerMonth * solPerActionSol * live.solUsd + inferenceUsd + s.infraUsdPerMonth;
 
   return {
     actionsPerMonth: r(actionsPerMonth, 2),
@@ -108,10 +108,10 @@ export function costModel(scenario: Scenario, live: LiveParams, assumptions: Ass
       infra_usd: r(s.infraUsdPerMonth), total_usd: r(totalUsd),
     },
     comparison: [
-      { chain: 'NEAR', monthly_usd: r(totalUsd), assumptions: ['gas price: live RPC', 'storage cost/byte: live RPC', 'Tgas/tx: scenario input'] },
-      { chain: 'Base', monthly_usd: r(evmCost(live.baseGasPriceWei, live.ethUsd)), assumptions: ['gasPrice: live eth_gasPrice', 'gas units/action: ASSUMPTION', 'ETH price: CoinGecko'] },
-      { chain: 'Ethereum', monthly_usd: r(evmCost(live.ethGasPriceWei, live.ethUsd)), assumptions: ['gasPrice: live eth_gasPrice', 'gas units/action: ASSUMPTION', 'ETH price: CoinGecko'] },
-      { chain: 'Solana', monthly_usd: r(solMonthlyUsd), assumptions: ['base fee: measured getFeeForMessage', 'rent: live RPC', 'signatures/action: ASSUMPTION'] },
+      { chain: 'NEAR', monthly_usd: r(totalUsd), assumptions: ['gas price: source rate input', 'storage: reserved separately, not recurring', 'Tgas/tx: scenario input'] },
+      { chain: 'Base', monthly_usd: r(evmCost(live.baseGasPriceWei, live.ethUsd)), assumptions: ['gasPrice: source rate input; excludes unmodelled L1 data / priority fees', 'gas units/action: ASSUMPTION', 'ETH price: dated provider input', 'same AI and hosting plan included'] },
+      { chain: 'Ethereum', monthly_usd: r(evmCost(live.ethGasPriceWei, live.ethUsd)), assumptions: ['gasPrice: source rate input; excludes unmodelled L1 data / priority fees', 'gas units/action: ASSUMPTION', 'ETH price: dated provider input', 'same AI and hosting plan included'] },
+      { chain: 'Solana', monthly_usd: r(solMonthlyUsd), assumptions: ['base fee: source getFeeForMessage input', `rent reserve excluded from recurring bill: ${r(solRentSol * live.solUsd)} USD`, 'signatures/action: ASSUMPTION', 'same AI and hosting plan included'] },
     ],
     cost_per_1000_actions_usd: r(actionsPerMonth > 0 ? totalUsd / (actionsPerMonth / 1000) : 0),
     formulas: [
@@ -120,8 +120,8 @@ export function costModel(scenario: Scenario, live: LiveParams, assumptions: Ass
       'NEAR gas USD/month = actions/month × gas NEAR/action × NEAR/USD',
       'storage LOCKED NEAR = MB × 10^6 × storage_amount_per_byte_yocto / 10^24 (locked capital, NOT spent)',
       'inference USD/month = tokens/day × 30 / 10^6 × (split × input_rate + (1−split) × output_rate)',
-      'EVM USD/month = actions/month × gas_units(assumption) × gasPrice_wei / 10^18 × ETH/USD',
-      'Solana USD/month = actions/month × sigs(assumption) × base_fee_lamports / 10^9 × SOL/USD + rent × SOL/USD',
+      'EVM USD/month = actions/month × gas_units(assumption) × gasPrice_wei / 10^18 × ETH/USD + same AI + hosting',
+      'Solana USD/month = actions/month × sigs(assumption) × base_fee_lamports / 10^9 × SOL/USD + same AI + hosting (rent reserve excluded)',
       'cost per 1,000 actions = total spent USD/month ÷ (actions/month ÷ 1000)',
     ],
     assumptions_used: [

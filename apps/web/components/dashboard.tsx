@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Activity, Clock3, Database, ExternalLink, RefreshCw, ShieldCheck } from 'lucide-react';
 import { CapitalFlow, CostOfLiving, HealthIndex } from './indices';
 import { EcosystemPulse } from './ecosystem-pulse';
+import { EvidenceGuide, LiveFleetEvidence } from './evidence-panel';
 import { AgentEconomySummary } from './agent-economy-summary';
 import { ProofPanel, CommitmentStrip } from './proof-panel';
 import { Card, Chip, Badge, TimeAgo, absoluteTime, shortHash, HashRow, Skeleton, EmptyState } from './ui';
@@ -18,7 +19,7 @@ export function FreshnessBar({ delivery, snapshot, commitment }: { delivery: any
       <span className="chip chip-green"><span className="dot dot-live" />SAVED NETWORK REPORT</span>
       <Chip><Clock3 size={11} /> age <TimeAgo iso={snapshot?.epoch_ts} /></Chip>
       <Chip><Database size={11} /> {delivery?.observed_network} observe → {delivery?.settled_network} settle</Chip>
-      <Chip>{snapshot?.inputs?.queries?.length || 0} real queries</Chip>
+      <Chip>{snapshot?.inputs?.queries?.length || 0} recorded query entries</Chip>
       {delivery?.stale && <Badge kind="stale">OLDER SAVED REPORT</Badge>}
       {delivery?.replay && <Badge kind="replay">SAVED VIEW · NOT A LIVE FEED</Badge>}
       <Chip>{snapshot?.methodology_version || 'v1'}</Chip>
@@ -51,6 +52,8 @@ export function HistoryTable() {
 }
 
 export function VaultDashboard({ vault }: { vault: any }) {
+  const evidence = useJson<any>('/chain-evidence',{auth:false});
+  const l=evidence.data?.evidence?.liquidity; const paired=l?.flow?l:null;
   const s = vault?.snapshot; const d = vault?.delivery; const c = vault?.commitment;
   if (!s) return <div className="wrap section"><Card><EmptyState title="Vault is empty" body="No saved report is available right now. Your investigation and watchlist tools are separate." /></Card></div>;
   return (
@@ -60,7 +63,7 @@ export function VaultDashboard({ vault }: { vault: any }) {
           <div>
             <span className="eyebrow">NEAR MAINNET / LIQUIDITY, TRADING & REVENUE</span>
             <h1 className="h2" style={{ marginTop: 10 }}>NEAR Ecosystem<br/><span className="serif" style={{ color: 'var(--green)' }}>Liquidity Intelligence.</span></h1>
-            <p className="small muted" style={{ marginTop: 10, maxWidth: 610, lineHeight: 1.6 }}>{s.snapshot_id} · {s.inputs?.queries?.length || 0} source queries pinned to real block heights · published by {c?.publisher_account || s.meta?.agent_account}</p>
+            <p className="small muted" style={{ marginTop: 10, maxWidth: 610, lineHeight: 1.6 }}>{s.snapshot_id} · {s.inputs?.queries?.length || 0} recorded source queries (not all block-pinned) · recorded publisher {c?.publisher_account || s.meta?.agent_account}</p>
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><Link href="/agent/0" className="btn btn-ghost btn-sm"><Activity size={13} /> Meet the agent</Link><Link href="/proof" className="btn btn-primary btn-sm"><ShieldCheck size={13} /> Check this report</Link></div>
         </div>
@@ -68,13 +71,15 @@ export function VaultDashboard({ vault }: { vault: any }) {
       </motion.div>
 
       <div className="bento" style={{ rowGap: 16 }}>
-        <CapitalFlow flow={s.capital_flow} blocks={s.inputs?.blocks} prices={s.inputs?.prices} observedAt={s.epoch_ts} />
+        <EvidenceGuide/>
+        <CapitalFlow flow={paired?.flow||s.capital_flow} blocks={paired?{'mainnet.pinned_resolved':paired.earlier.height,'mainnet.latest':paired.later.height}:s.inputs?.blocks} prices={paired?{near_usd:paired.price?.near_usd,price_observed_at:paired.price?.observed_at}:s.inputs?.prices} observedAt={s.epoch_ts} reading={paired}/>
         <EcosystemPulse/>
         <section id="agentic-economy" className="card col-12" style={{padding:26,marginTop:20,scrollMarginTop:90}} aria-labelledby="agentic-title">
           <span className="eyebrow">A DIFFERENT LENS / AGENT ACTIVITY & ECONOMICS</span>
           <h2 id="agentic-title" className="h2" style={{marginTop:12}}>Agentic Economy Intel</h2>
           <p className="lead" style={{maxWidth:850}}>Are the sampled agents doing work, and what would your own setup cost? Explore activity first, then build a running budget. These figures are separate from ecosystem TVL and trading volume.</p>
           <p className="small muted">Activity uses the saved Sentinel fleet sample—not a census of all AI agents on NEAR. The budget uses saved rates and your chosen workload.</p>
+          <LiveFleetEvidence packet={evidence.data} loading={evidence.loading} error={evidence.error} refresh={evidence.refresh}/>
           <AgentEconomySummary health={s.agent_health} cost={s.cost_of_living}/>
           <h3 className="h3" style={{marginTop:28}}>Full agent health & running-cost intelligence</h3>
           <div className="bento" style={{gap:16,marginTop:24}}><HealthIndex health={s.agent_health}/><CostOfLiving initial={s.cost_of_living}/></div>

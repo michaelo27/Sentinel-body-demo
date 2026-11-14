@@ -41,6 +41,7 @@ export function CostOfLiving({ initial }: { initial: any }) {
 
   useEffect(() => {
     let cancelled = false;
+    setQuote(null);
     const t = setTimeout(async () => {
       setBusy(true);
       try {
@@ -60,7 +61,7 @@ export function CostOfLiving({ initial }: { initial: any }) {
 
   return (
     <Card className="col-7" style={{ padding: 26 }}>
-      <IndexHeader n="02" title="What would my agents cost to run?" sub="Build a monthly budget. Choose how many agents you want, how often they act and how much AI they use. These are estimates from saved rates, not charges to your wallet." badges={<><Badge kind="fact">Saved network rates</Badge><Badge kind="measured">Saved AI prices</Badge><Badge kind="assumption">Your usage plan</Badge></>} />
+      <IndexHeader n="02" title="What would my agents cost to run?" sub="Build a monthly budget. Choose how many agents you want, how often they act and how much AI they use. These are estimates from saved rates, not charges to your wallet." badges={<><Badge kind="fact">Historical rate inputs</Badge><Badge kind="assumption">Saved AI catalog prices</Badge><Badge kind="assumption">Your usage plan</Badge></>} />
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '14px 22px', marginBottom: 22 }}>
         {SLIDERS.map((s) => (
           <label key={s.key} style={{ display: 'block' }}>
@@ -76,7 +77,7 @@ export function CostOfLiving({ initial }: { initial: any }) {
           </select>
         </label>
       </div>
-      <div className="card-surface" style={{padding:18,borderRadius:12,marginBottom:18}}><strong>Your budget, in plain English</strong><p className="small muted">At the settings shown, the monthly plan includes {usd(result?.monthly?.gas_usd)} in network fees, {usd(result?.monthly?.inference_usd)} for AI and {usd(result?.monthly?.infra_usd)} for hosting. Reduce daily actions or AI usage to see which choice lowers the estimate.</p><p className="small muted">Storage is different: NEAR is reserved while data occupies space. It is not a monthly subscription charge. These saved-rate estimates do not create a bill or move funds.</p></div>
+      <div className="card-surface" style={{padding:18,borderRadius:12,marginBottom:18}}><strong>Your budget, in plain English</strong>{!quote&&<p className="small" style={{color:'var(--amber)'}}>Showing the saved default example while a quote is pending or unavailable. These numbers do not yet reflect changed controls. Legacy saved comparison rows used different cost inclusions; use only a successfully recalculated quote for the revised comparison.</p>}<p className="small muted">The displayed result includes {usd(result?.monthly?.gas_usd)} in network fees, {usd(result?.monthly?.inference_usd)} for AI and {usd(result?.monthly?.infra_usd)} for hosting. Reduce daily actions or AI usage to see which choice lowers the estimate.</p><p className="small muted">Storage is different: NEAR is reserved while data occupies space. It is not a monthly subscription charge. These saved-rate estimates do not create a bill or move funds.</p></div>
       <div className="hairline" style={{ margin: '4px 0 20px' }} />
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, marginBottom: 18 }}>
         <div className="card-surface" style={{ padding: 14, borderRadius: 12, border: '1px solid var(--border)' }}>
@@ -95,12 +96,12 @@ export function CostOfLiving({ initial }: { initial: any }) {
           <div className="tiny tertiary" style={{ marginTop: 4 }}>≈ {usd(result?.monthly?.storage_locked_usd)} refundable</div>
         </div>
       </div>
-      <div className="card-title" style={{ marginBottom: 10 }}>Compare monthly budgets · same usage</div>
+      <p className="small muted">Recalculated rows include the same AI and hosting plan on each chain; recurring network fees differ by the stated workload model. Storage/rent reserves are excluded from recurring totals. EVM gas units and Solana signatures are scenario inputs; Base L1 data fees, priority fees and execution-specific differences are not fully modelled. This is not an apples-to-apples measured performance benchmark.</p><div className="card-title" style={{ marginBottom: 10 }}>Compare recurring scenario estimates · not benchmarked executions</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {comparison.map((c: any) => (
           <div key={c.chain}>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 4 }}>
-              <span className="small muted">{c.chain} {c.assumptions?.some((a: string) => a.includes('ASSUMPTION')) && <span className="chip chip-amber" style={{ height: 18, marginLeft: 6 }}>partly assumed</span>}</span>
+              <span className="small muted">{c.chain} {c.assumptions?.some((a: string) => a.includes('ASSUMPTION')) && <span className="chip chip-amber" style={{ height: 18, marginLeft: 6 }}>estimate</span>}</span>
               <span className="mono tiny">${c.monthly_usd.toFixed(2)}</span>
             </div>
             <div style={{ height: 6, background: 'rgba(255,255,255,.06)', borderRadius: 4 }}>
@@ -129,7 +130,7 @@ export function HealthIndex({ health }: { health: any }) {
   if (!health || !Number.isFinite(health.score)) return <Card className="col-5" title="Agent activity"><p>No activity reading is available in this report.</p></Card>;
   return (
     <Card className="col-5" style={{ padding: 26 }}>
-      <IndexHeader n="03" title="How active is the sampled agent fleet?" sub="A summary score for the agents and accounts in this saved report. Higher means stronger activity on the measured signals—not a rating for the whole NEAR ecosystem." badges={<><Badge kind="fact">Activity score</Badge><Badge kind="assumption">Coverage {Math.round((health?.coverage ?? 0) * 100)}%</Badge></>} />
+      <IndexHeader n="03" title="Historical fleet health model" sub="A custom weighted score stored in the old report—not an official NEAR metric. Some signals use neutral defaults or duplicate proxies. Use the fresh block-pinned fleet evidence above for current contract facts." badges={<><Badge kind="assumption">Custom scoring model</Badge><Badge kind="assumption">Input checklist {Math.round((health?.coverage ?? 0) * 100)}%</Badge></>} />
       <div className="card-surface" style={{padding:16,borderRadius:12,marginBottom:18}}><strong>{health?.fleet?.active ?? '—'} of {health?.fleet?.agents ?? '—'} sampled agents were active</strong><p className="small muted">This is the activity captured in the saved report—not a live uptime check. Use the breakdown to see which signals contributed to the score. For a specific buddy, open its agent page and inspect recent report publications.</p></div>
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', margin: '4px 0 18px' }}>
         <svg viewBox="0 0 210 122" width="210" height="122" role="img" aria-label={`Health index score ${score.toFixed(1)} out of 100`}>
@@ -140,25 +141,25 @@ export function HealthIndex({ health }: { health: any }) {
         </svg>
         <div style={{ position: 'absolute', bottom: 4, textAlign: 'center' }}>
           <div className="num" style={{ fontSize: 42, lineHeight: 1 }}><CountUp value={score} digits={1} /></div>
-          <div className="tiny tertiary" style={{ letterSpacing: '.1em', textTransform: 'uppercase' }}>sample score / 100</div>
+          <div className="tiny tertiary" style={{ letterSpacing: '.1em', textTransform: 'uppercase' }}>legacy model / 100</div>
         </div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
-        <div className="card-surface" style={{ padding: 12, borderRadius: 11, border: '1px solid var(--border)' }}><div className="card-title">Evidence confidence</div><div className="num" style={{ fontSize: 20, marginTop: 4 }}>{Math.round((health?.confidence ?? 0) * 100)}%</div></div>
+        <div className="card-surface" style={{ padding: 12, borderRadius: 11, border: '1px solid var(--border)' }}><div className="card-title">Model completeness weight</div><div className="num" style={{ fontSize: 20, marginTop: 4 }}>{Math.round((health?.confidence ?? 0) * 100)}%</div></div>
         <div className="card-surface" style={{ padding: 12, borderRadius: 11, border: '1px solid var(--border)' }}><div className="card-title">Agents in this sample</div><div className="num" style={{ fontSize: 20, marginTop: 4 }}>{health?.fleet?.agents ?? '—'} <span className="tiny" style={{ color: 'var(--green)' }}>{health?.fleet?.active ?? 0} active</span></div></div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
         {(health?.components || []).map((c: any) => (
           <div key={c.id}>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 4 }}>
-              <span className="small muted" style={{ textTransform: 'capitalize' }}>{({activity:'Recorded actions',growth:'Change in activity',capital:'Balance changes',concentration:'How spread out activity is',retention:'Returning activity',fleet_liveness:'Agents publishing reports'} as Record<string,string>)[c.id] || c.id.replace(/_/g, ' ')}</span>
+              <span className="small muted" style={{ textTransform: 'capitalize' }}>{({activity:'Publishing agents / fixed bound',growth:'Agent-count change / default',capital:'Balance changes',concentration:'How spread out activity is',retention:'Publisher-share proxy (duplicated)',fleet_liveness:'Agents publishing reports'} as Record<string,string>)[c.id] || c.id.replace(/_/g, ' ')}</span>
               <span className="mono tiny">{c.normalized.toFixed(1)} / 100</span>
             </div>
             <div style={{ height: 4, background: 'rgba(255,255,255,.06)', borderRadius: 3 }}><div style={{ width: `${c.normalized}%`, height: '100%', background: c.normalized > 66 ? 'var(--green)' : c.normalized > 33 ? 'var(--amber)' : 'var(--rose)', borderRadius: 3 }} /></div>
           </div>
         ))}
       </div>
-      <p className="tiny tertiary" style={{ marginTop: 16, lineHeight: 1.6, marginBottom: 0 }}>{health?.what_this_is_not}</p>
+      <details style={{marginTop:20}}><summary>Exactly how this legacy score was constructed</summary><p className="small muted">Publishing agents are counted only among the last two retained report entries, not a time-window activity census. The activity component divides that count by a fixed bound of 25. Agent-count growth and aggregate-balance growth use a previous fleet baseline; when it was absent, the old model substituted raw zero, which normalized to 50/100. Those neutral scores are not observed stability. Retention and fleet liveness use the same publisher-share proxy; retention is not measured repeat-user activity.</p><p className="small muted">Weights: activity 20%, agent-count growth 15%, balance growth 20%, balance dispersion 15%, publisher-share proxy 15%, liveness proxy 15%. Completeness adds 60% for a nonempty fleet, 20% for any retained commitment and 20% for a previous baseline; a stale flag applies a 0.6 multiplier to the confidence field. These are design weights, not statistical confidence or ecosystem coverage.</p><p className="small muted">The old score is preserved for historical reproducibility, not silently rewritten inside a committed snapshot. It is not used to certify agents as safe or healthy.</p></details><p className="tiny tertiary" style={{ marginTop: 16, lineHeight: 1.6, marginBottom: 0 }}>{health?.what_this_is_not}</p>
       {(health?.cohorts || []).map((c: any) => <div key={c.id} className="tiny tertiary mono" style={{ marginTop: 6 }}>· {c.id}: {c.accounts} accounts — {c.status}</div>)}
     </Card>
   );

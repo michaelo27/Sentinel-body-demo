@@ -18,6 +18,16 @@ The Vault also separates **NEAR Ecosystem Liquidity Intelligence** from **Agenti
 >
 > This is a testnet prototype. The Worker collects data, NEAR AI Cloud generates text, and an operator-triggered local process publishes as the NFT's agent. **It is not an autonomous AI running on-chain.**
 
+## Evidence and authenticity — read this before judging the numbers
+
+The Vault distinguishes **block-pinned chain readings**, **third-party provider metrics**, **custom models/estimates** and **AI interpretations**. They are not equally verified. [The authenticity audit](docs/AUTHENTICITY-AUDIT.md) documents findings, corrections, source coverage and reproduction steps.
+
+AUD01 adds a fresh, reproducible native-NEAR liquidity sample (two actual block hashes, 1,200 blocks apart, exact integer deltas) and a separate current Sentinel fleet evidence card. Download raw RPC responses and check them with `node scripts/check-chain-evidence.mjs --packet <file> --reread` after deployment. No wallet or AI credit is required. The old snapshot's hash was checked against the live contract and matches, but that proves integrity—not every original source value.
+
+The historical health gauge remains available as an explicitly labelled **custom model**: missing baselines previously produced neutral scores; confidence/coverage fields are design weights, not statistical confidence or an official NEAR rating. Recalculated cross-chain budgets now include the same AI/hosting plan and exclude rent reserves from recurring totals; they are still scenario estimates, not execution benchmarks.
+
+Official BigQuery/Intents documentation was reviewed, but neither is falsely claimed as an active integration. BigQuery queries can cost money; the Intents Explorer requires a partner JWT. No paid infrastructure or new secrets were introduced. See the audit for the tested source paths and remaining limits. AUD01 must be deployed before the new evidence endpoint is available.
+
 ## At a glance — for human and automated reviewers
 
 | Question | Answer |
@@ -57,7 +67,7 @@ The MIS01 source update adds three practical capabilities without removing the e
 
 The model explains evidence gathered by a bounded server plan. It does not freely browse, hold signing keys, trade or invent missing history. NearBlocks provides at most five recent activity records, not a complete ledger or proof of a balance drop's cause. The existing AI quota is shared with missions, raised to ten per day per holder with approval, while retaining ten per day globally and forty lifetime attempts. Exact provider cost must be checked in provider billing; reported token usage appears in the case.
 
-**Deployment/evidence status:** implemented and tested locally, including live read-only source collection; production deployment and live inference for the new prompt still require confirmation. Private case JSON is not an AG01 publication packet. The existing watch-report publication flow remains unchanged; mission cases are not claimed as on-chain publications.
+**Deployment/evidence status:** the owner confirmed MIS01/QUOTA01 deployment, successful transaction evidence collection and a completed source-linked mission AI readout. The readout also demonstrated why model statements still require review. Personal/ecosystem mission acceptance is not inferred from that one transaction test. Private case JSON is not an AG01 publication packet. The existing watch-report publication flow remains unchanged; mission cases are not claimed as on-chain publications.
 
 See [Buddy missions: use, privacy, limits and deployment](docs/BUDDY-MISSIONS.md) for the full walkthrough and source map.
 
@@ -78,7 +88,7 @@ When a useful explanation is ready, prepare a report for a specific NFT you own.
 
 ### 3. NEAR Ecosystem Liquidity Intelligence
 
-**Where did the sampled balances move?** A full-width coloured balance-change diagram is followed by a full-width category/account table, a plain-English takeaway and expandable explanations of what to check next.
+**Where did the sampled balances move?** AUD01 prioritizes fresh block-pinned native NEAR comparisons, with an explicitly archived fallback. A full-width coloured balance-change diagram is followed by a full-width category/account table, a plain-English takeaway and expandable explanations of what to check next.
 
 | Category | Accounts sampled | What the reading covers |
 |---|---|---|
@@ -88,9 +98,9 @@ When a useful explanation is ready, prepare a report for a specific NFT you own.
 | Bridge / Aurora | `aurora` | One selected account, not all bridge assets or flows. |
 | wNEAR reserve | `wrap.near` | The wrapped-NEAR contract’s native account balance, used as a reserve-account reading. |
 
-**How to read it:** later balance minus earlier balance equals change. Green means an increase; rose/pink means a decrease. Wider bands represent larger dollar-equivalent changes. Connecting bands group the readings visually; **they are not traced transfers between projects**. Zero net change does not mean zero transactions.
+**How to read it:** later balance minus earlier balance equals change. Green means an increase; rose/pink means a decrease. In AUD01, wider bands represent larger native-NEAR changes. Connecting bands group the readings visually; **they are not traced transfers between projects**. Zero net change does not mean zero transactions.
 
-The headline adds the sample’s changes. Its dollar figure uses the saved report price, not necessarily the current market price. Block numbers identify the comparison points. The intended roughly 12-hour window is not an exact elapsed-time guarantee; that requires both block timestamps. A decrease is not automatically a loss, a sale, a hack or capital leaving NEAR.
+The headline adds the sample’s changes only when all selected account pairs are available. AUD01 uses two pinned block hashes exactly 1,200 heights apart and shows actual elapsed time. Its optional dollar figure uses a separately dated provider price, not guaranteed block-time pricing. The archived fallback uses the original saved conversion and intended roughly 12-hour window; it is explicitly labelled historical and not independently reread. A decrease is not automatically a loss, a sale, a hack or capital leaving NEAR.
 
 #### Ecosystem Pulse — value held, traded and earned
 
@@ -120,9 +130,9 @@ This is a separate section, not another name for ecosystem liquidity. **The new 
 | Interactive running-cost calculator | Workload sliders and model selection, network fees, AI usage, hosting, storage, cost per 1,000 actions and cross-chain comparisons. |
 | Calculation details | Saved rates, inputs, formulas and available provenance. |
 
-**Health means activity on the measured signals**, not a security audit, live uptime guarantee or score for every AI agent on NEAR. Coverage and confidence describe the saved report’s evidence; they are not guarantees of safety or correctness.
+**The old health gauge is a custom weighted model**, not a security audit, live uptime guarantee or score for every AI agent on NEAR. Missing-baseline neutral defaults and duplicated publisher-share signals are disclosed. Coverage/confidence are developer-selected checklist weights, not statistical probabilities. The new block-pinned fleet card shows actual retained-publication counts separately.
 
-**Running costs are budget estimates, not charges.** Network fees, AI usage and hosting contribute to the monthly plan. NEAR reserved for storage is separate from a monthly subscription cost. Changing sliders does not move funds or trigger paid inference. Cross-chain comparisons use the displayed scenario and saved inputs, not a universal claim that one chain is always cheapest.
+**Running costs are budget estimates, not charges.** Network fees, AI usage and hosting contribute to the monthly plan. NEAR reserved for storage is separate from a monthly subscription cost. Changing sliders does not move funds or trigger paid inference. Recalculated cross-chain comparisons include the same AI/hosting plan and exclude storage/rent reserves from recurring totals; they still omit some execution-specific fees and do not establish a universal cheapest chain.
 
 ### A quick vocabulary guide
 

@@ -197,7 +197,7 @@ app.post('/api/cost/quote', async (req, reply) => {
     scenario, result: costModel(scenario, live, DEFAULT_ASSUMPTIONS),
     live_params: { ...i.gas, ...i.prices, model_id: modelId, model_kind: 'published_catalog', model_source: assumptions().inference.source_url },
     provenance: { snapshot_id: s.snapshot_id, epoch_ts: s.epoch_ts, observed_block_heights: i.blocks, mode: s.meta.mode, stale: s.meta.stale },
-    labels: { model: 'Published catalog', gas: 'Live RPC', storage: 'Live RPC (locked capital, not spent)', evm_gas_units: 'ASSUMPTION', sol_signatures: 'ASSUMPTION', utilization: 'ASSUMPTION', inference_split: 'ASSUMPTION' },
+    labels: { model: 'Published catalog', gas: 'Saved RPC rate input', storage: 'Saved RPC rate input (locked capital, not spent)', evm_gas_units: 'ASSUMPTION', sol_signatures: 'ASSUMPTION', utilization: 'ASSUMPTION', inference_split: 'ASSUMPTION' },
   };
 });
 
