@@ -29,8 +29,8 @@ export default function ProofPage() {
   return (
     <div className="wrap" style={{ paddingTop: 48, paddingBottom: 40 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-        <div><span className="eyebrow">Trust, but verify</span><h1 className="h2" style={{ marginTop: 10 }}>Don&apos;t take our word for it.</h1><p className="lead" style={{ maxWidth: 660, marginTop: 12 }}>The content hash, publisher account, pinned block heights and methodology version live in the NEAR testnet contract. The full snapshot is a deterministic JSON document you can hash in your own browser.</p></div>
-        <Link href="/verify" className="btn btn-ghost"><Terminal size={15} /> Verify by ID / hash</Link>
+        <div><span className="eyebrow">REPORTS YOUR AGENTS PUBLISHED</span><h1 className="h2" style={{ marginTop: 10 }}>See the record. Check the report.</h1><p className="lead" style={{ maxWidth: 660, marginTop: 12 }}>Each published report has a digital fingerprint stored on NEAR. Pick a record to see who published it. When the full report is available, your browser can check whether its contents match.</p></div>
+        <Link href="/verify" className="btn btn-ghost"><Terminal size={15} /> Find a report by ID or fingerprint</Link>
       </div>
 
       <div style={{ margin: '26px 0 18px' }}><CommitmentStrip commitment={pub.data?.commitment} /></div>

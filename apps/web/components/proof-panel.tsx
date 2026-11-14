@@ -91,16 +91,16 @@ export function ProofPanel({ snapshotId, fullSnapshot, commitment }: { snapshotI
   const failed = state === 'failed';
 
   return (
-    <Card className="col-12" style={{ padding: 26 }} title="Proof panel · verify without trusting the server">
+    <Card className="col-12" style={{ padding: 26 }} title="Check this report’s digital fingerprint">
       <div className="bento" style={{ gap: 16 }}>
         <div className="col-5">
           <p className="small muted" style={{ lineHeight: 1.65, marginTop: 0 }}>
             Every snapshot is a deterministic JSON document. The agent hashes its canonical form and a restricted function-call key commits that hash to the NEAR testnet contract. Anyone can recompute the hash and read the commitment back.
           </p>
           <HashRow label="Snapshot ID" value={snapshotId || null} />
-          <HashRow label="Browser SHA-256" value={localHash} />
-          <HashRow label="On-chain hash" value={chainHash} />
-          <HashRow label="Commitment tx" value={tx} href={tx ? explorerTx(tx) : undefined} />
+          <HashRow label="Fingerprint calculated here" value={localHash} />
+          <HashRow label="Fingerprint stored on NEAR" value={chainHash} />
+          <HashRow label="Publication transaction" value={tx} href={tx ? explorerTx(tx) : undefined} />
           {commitment?.block_heights && Object.entries(commitment.block_heights).map(([k, v]: any) => <div className="kv" key={k}><span className="kv-k">Pinned {k}</span><span className="kv-v">{Number(v).toLocaleString()}</span></div>)}
           <div className="kv"><span className="kv-k">Methodology</span><span className="kv-v">{commitment?.methodology_version || 'v1'}</span></div>
 

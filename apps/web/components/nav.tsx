@@ -10,12 +10,12 @@ const LINKS = [
   { href: '/', label: 'Home' },
   { href: '/collection', label: 'Collection' },
   { href: '/about', label: 'About' },
-  { href: '/live', label: 'Live intel' },
-  { href: '/proof', label: 'Proof' },
+  { href: '/live', label: 'Explore' },
+  { href: '/proof', label: 'Reports' },
   { href: '/agent/0', label: 'Agent' },
   { href: '/mint', label: 'Mint' },
-  { href: '/verify', label: 'Verify' },
-  { href: '/vault', label: 'Vault' },
+  { href: '/verify', label: 'Check report' },
+  { href: '/vault', label: 'My vault' },
 ];
 
 export function Nav() {

@@ -21,7 +21,7 @@ export default function AgentPage() {
   return (
     <div className="wrap" style={{ paddingTop: 48, paddingBottom: 40 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 26 }}>
-        <div><span className="eyebrow">Agent console · token #{id}</span><h1 className="h2" style={{ marginTop: 10 }}>A body with <span className="serif" style={{ color: 'var(--green)' }}>one key.</span></h1><p className="lead" style={{ maxWidth: 640, marginTop: 12 }}>This account was created by the NFT contract at mint. It has no full-access key; all authority flows from the parent contract and therefore from the current NFT holder.</p></div>
+        <div><span className="eyebrow">MEET YOUR AGENT · NFT #{id}</span><h1 className="h2" style={{ marginTop: 10 }}>Your buddy has <span className="serif" style={{ color: 'var(--green)' }}>an on-chain identity.</span></h1><p className="lead" style={{ maxWidth: 640, marginTop: 12 }}>This is the NEAR account linked to this NFT. Its job is to publish report fingerprints using a limited key. AI explanations run off-chain, and an operator approves each report publication.</p></div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><Link href="/vault" className="btn btn-ghost btn-sm">Holder vault</Link><Link href="/proof" className="btn btn-primary btn-sm"><ShieldCheck size={13} /> Proof</Link></div>
       </div>
 
@@ -38,19 +38,19 @@ export default function AgentPage() {
             <a href={d.explorer_url} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm" style={{ marginTop: 18 }}><ExternalLink size={13} /> Account explorer</a>
           </Card>
 
-          <Card className="col-8" title="On-chain state · live RPC views" right={<button className="btn btn-ghost btn-sm" onClick={a.refresh} aria-label="Refresh agent state"><RefreshCw size={13} /></button>}>
+          <Card className="col-8" title="Your agent at a glance" right={<button className="btn btn-ghost btn-sm" onClick={a.refresh} aria-label="Refresh agent state"><RefreshCw size={13} /></button>}>
             <div className="bento" style={{ gap: 12 }}>
               <div className="col-6"><div className="card-surface" style={{ padding: 15, borderRadius: 12, border: '1px solid var(--border)' }}>
                 <div className="card-title"><Cpu size={12} style={{ verticalAlign: -2 }} /> Current owner</div><div className="mono small" style={{ marginTop: 8, color: 'var(--green)', wordBreak: 'break-all' }}>{d.owner_id}</div>
                 <div className="tiny tertiary" style={{ marginTop: 6 }}>nft_token view · transfer changes this</div>
               </div></div>
               <div className="col-6"><div className="card-surface" style={{ padding: 15, borderRadius: 12, border: '1px solid var(--border)' }}>
-                <div className="card-title"><Fuel size={12} style={{ verticalAlign: -2 }} /> Fuel balance</div><div className="num" style={{ fontSize: 24, marginTop: 6, color: lowFuel ? 'var(--amber)' : 'var(--text)' }}>{balance?.toFixed(5)} <span className="tiny tertiary">NEAR</span></div>
+                <div className="card-title"><Fuel size={12} style={{ verticalAlign: -2 }} /> NEAR held by the agent</div><div className="num" style={{ fontSize: 24, marginTop: 6, color: lowFuel ? 'var(--amber)' : 'var(--text)' }}>{balance?.toFixed(5)} <span className="tiny tertiary">NEAR</span></div>
                 <div style={{ height: 6, background: 'rgba(255,255,255,.06)', borderRadius: 4, marginTop: 8 }}><motion.div initial={{ width: 0 }} animate={{ width: `${fuelPct}%` }} style={{ height: '100%', background: lowFuel ? 'var(--amber)' : 'linear-gradient(90deg,var(--green),var(--cyan))', borderRadius: 4 }} /></div>
                 <div className="tiny tertiary" style={{ marginTop: 6 }}>{d.storage_usage_bytes?.toLocaleString()} bytes storage · {lowFuel ? 'LOW FUEL' : 'healthy'} · seed 1.56312 NEAR</div>
               </div></div>
               <div className="col-12" style={{ marginTop: 4 }}>
-                <div className="card-title" style={{ marginBottom: 10 }}>Access keys · view_access_key_list</div>
+                <div className="card-title" style={{ marginBottom: 10 }}>What this agent’s key can do</div>
                 {(d.access_keys || []).length ? d.access_keys.map((k: any, i: number) => {
                   const fc = k.access_key.permission?.FunctionCall;
                   const full = k.access_key.permission === 'FullAccess';
@@ -71,15 +71,15 @@ export default function AgentPage() {
 
           <TransferDemo />
 
-          <Card className="col-7" title="Commitments signed by this agent" right={<Chip>{d.commitments?.length || 0} records</Chip>}>
+          <Card className="col-7" title="Reports published by this agent" right={<Chip>{d.commitments?.length || 0} records</Chip>}>
             <div style={{ overflowX: 'auto' }}><table className="table"><thead><tr><th>Snapshot</th><th>Hash</th><th>Block</th><th>When</th></tr></thead><tbody>
-              {(d.commitments || []).slice().reverse().map((c: any) => <tr key={c.id}><td style={{ color: 'var(--cyan)' }}>{shortHash(c.id, 16)}</td><td>{shortHash(c.content_hash, 12)}</td><td>{c.block_height?.toLocaleString()}</td><td><TimeAgo iso={Number(c.block_timestamp) / 1e6} /></td></tr>)}
+              {(d.commitments || []).slice().reverse().map((c: any) => <tr key={c.id}><td style={{ color: 'var(--cyan)' }}>{shortHash(c.id, 16)}</td><td>{shortHash(c.content_hash, 12)}</td><td>{c.block_height?.toLocaleString()}</td><td><TimeAgo iso={Number(c.block_timestamp)} /></td></tr>)}
             </tbody></table></div>
-            {!d.commitments?.length && <EmptyState title="No publishes yet" body="The agent publishes its first snapshot on the next round." />}
+            {!d.commitments?.length && <EmptyState title="No published reports yet" body="Prepare a saved AI report in your Vault. The operator can then approve publication through this agent." />}
             <p className="tiny tertiary" style={{ marginTop: 12, marginBottom: 0 }}>History stays with the agent account after an NFT transfer. The new owner sees every prior commitment.</p>
           </Card>
 
-          <Card className="col-5" title="Activity · gateway event log">
+          <Card className="col-5" title="Recorded operator activity">
             <div className="terminal" style={{ maxHeight: 310, overflow: 'auto' }}>
               {(d.activity || []).map((x: any, i: number) => <div className="terminal-row" key={i}>
                 <span className="terminal-time">{new Date(x.at).toISOString().slice(11, 19)}</span>
@@ -87,10 +87,10 @@ export default function AgentPage() {
                 <span style={{ color: x.ok ? 'var(--text-2)' : 'var(--rose)', wordBreak: 'break-word' }}>{x.detail}</span>
               </div>)}
             </div>
-            <div className="tiny tertiary" style={{ marginTop: 12, lineHeight: 1.6 }}>Runtime loop: 30 min · <span className="mono">/admin/run-now</span> for a one-off round · multiple agent accounts publish round-robin. A failed free source falls back to the last real snapshot with a visible STALE badge.</div>
+            <div className="tiny tertiary" style={{ marginTop: 12, lineHeight: 1.6 }}>Report publication is operator-triggered. Check the report history above for on-chain evidence; an empty activity log does not mean the agent has never published.</div>
           </Card>
 
-          <Card className="col-12" title="Controller contract surface · parent only">
+          <Card className="col-12" title="Technical controls · advanced">
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {['parent()', 'worker_key()', 'withdraw(amount)', 'set_worker_key(public_key)', 'publish_snapshot(…)', 'agent_withdraw(…)', 'agent_set_worker_key(…)'].map((m) => <Chip key={m}>{m}</Chip>)}
             </div>

@@ -96,7 +96,7 @@ export default function MintPage() {
   return (
     <div className="wrap" style={{ paddingTop: 48, paddingBottom: 40 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-        <div><span className="eyebrow">Agent-account birth</span><h1 className="h2" style={{ marginTop: 10 }}>Mint a buddy. <span className="serif" style={{ color: 'var(--green)' }}>Watch it wake up.</span></h1><p className="lead" style={{ maxWidth: 680, marginTop: 12 }}>One payable transaction creates a real NEAR subaccount, deploys a controller, funds the agent and gives it exactly one restricted worker key. Then prove ownership and the vault opens.</p></div>
+        <div><span className="eyebrow">YOUR NFT IS THE START</span><h1 className="h2" style={{ marginTop: 10 }}>Mint an NFT. <span className="serif" style={{ color: 'var(--green)' }}>Unlock an AI agent.</span></h1><p className="lead" style={{ maxWidth: 680, marginTop: 12 }}>One mint gives you a Sentinel NFT and its own NEAR agent account. Confirm ownership to open the intel vault: investigate accounts, watch balances and ask AI to explain your saved evidence.</p></div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><Chip tone="green"><span className="dot dot-live" />NEAR TESTNET</Chip><Chip>FREE FAUCET NEAR</Chip></div>
       </div>
 

@@ -26,8 +26,8 @@ export default function VerifyPage() {
   return (
     <div className="wrap" style={{ paddingTop: 48, paddingBottom: 40 }}>
       <span className="eyebrow">Public verifier</span>
-      <h1 className="h2" style={{ marginTop: 10 }}>Verify a snapshot or a hash.</h1>
-      <p className="lead" style={{ maxWidth: 680, marginTop: 12 }}>Paste a snapshot ID or a 64-character content hash. The contract commitment is public immediately; the full-resolution snapshot becomes public after the delay so the hash can be recomputed locally.</p>
+      <h1 className="h2" style={{ marginTop: 10 }}>Has this report changed?</h1>
+      <p className="lead" style={{ maxWidth: 680, marginTop: 12 }}>Paste a report ID or its 64-character fingerprint. We look for its on-chain record. Public reports can be checked here; private AI reports are checked from your Vault or downloaded packet.</p>
 
       <Card style={{ marginTop: 26, padding: 20 }}>
         <form onSubmit={(e) => { e.preventDefault(); if (q.trim() === submitted) { void result.refresh(); } else { setSubmitted(q.trim()); } }} style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>

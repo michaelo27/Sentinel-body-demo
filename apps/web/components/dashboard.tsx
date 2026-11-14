@@ -13,12 +13,12 @@ const ease = [0.22, 1, 0.36, 1] as const;
 export function FreshnessBar({ delivery, snapshot, commitment }: { delivery: any; snapshot: any; commitment: any }) {
   return (
     <div className="card" style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center', padding: '15px 20px', marginBottom: 18 }}>
-      <span className="chip chip-green"><span className="dot dot-live" />LIVE HOLDER TIER</span>
+      <span className="chip chip-green"><span className="dot dot-live" />SAVED NETWORK REPORT</span>
       <Chip><Clock3 size={11} /> age <TimeAgo iso={snapshot?.epoch_ts} /></Chip>
       <Chip><Database size={11} /> {delivery?.observed_network} observe → {delivery?.settled_network} settle</Chip>
       <Chip>{snapshot?.inputs?.queries?.length || 0} real queries</Chip>
-      {delivery?.stale && <Badge kind="stale">STALE · LAST REAL SNAPSHOT</Badge>}
-      {delivery?.replay && <Badge kind="replay">REPLAY OF RECORDED REAL DATA</Badge>}
+      {delivery?.stale && <Badge kind="stale">OLDER SAVED REPORT</Badge>}
+      {delivery?.replay && <Badge kind="replay">SAVED VIEW · NOT A LIVE FEED</Badge>}
       <Chip>{snapshot?.methodology_version || 'v1'}</Chip>
       <span className="tiny tertiary mono" style={{ marginLeft: 'auto' }} title={absoluteTime(snapshot?.epoch_ts)}>{snapshot?.epoch_ts}</span>
       <Link href="/proof" className="btn btn-ghost btn-sm"><ShieldCheck size={13} /> Proof</Link>
@@ -29,7 +29,7 @@ export function FreshnessBar({ delivery, snapshot, commitment }: { delivery: any
 export function HistoryTable() {
   const h = useJson<any>('/api/vault/history', { intervalMs: 60000 });
   return (
-    <Card className="col-12" title="Vault history · every real committed snapshot" right={<div style={{ display: 'flex', gap: 6 }}><Chip>{h.data?.items?.length || 0} snapshots</Chip><button className="btn btn-ghost btn-sm" onClick={h.refresh} aria-label="Refresh history"><RefreshCw size={13} /></button></div>}>
+    <Card className="col-12" title="Saved reports you can check" right={<div style={{ display: 'flex', gap: 6 }}><Chip>{h.data?.items?.length || 0} snapshots</Chip><button className="btn btn-ghost btn-sm" onClick={h.refresh} aria-label="Refresh history"><RefreshCw size={13} /></button></div>}>
       {h.loading && !h.data ? <div style={{ display: 'grid', gap: 10 }}><Skeleton h={30} /><Skeleton h={30} /><Skeleton h={30} /></div> : h.error ? <EmptyState title="History unavailable" body={h.error} /> : (h.data?.items?.length ? (
         <div style={{ overflowX: 'auto' }}>
           <table className="table">
@@ -50,17 +50,17 @@ export function HistoryTable() {
 
 export function VaultDashboard({ vault }: { vault: any }) {
   const s = vault?.snapshot; const d = vault?.delivery; const c = vault?.commitment;
-  if (!s) return <div className="wrap section"><Card><EmptyState title="Vault is empty" body="No snapshot has been committed yet. Run pnpm agent:run to perform a real data round." /></Card></div>;
+  if (!s) return <div className="wrap section"><Card><EmptyState title="Vault is empty" body="No saved report is available right now. Your investigation and watchlist tools are separate." /></Card></div>;
   return (
     <div className="wrap" style={{ paddingTop: 42, paddingBottom: 40 }}>
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .5, ease }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 24 }}>
           <div>
-            <span className="eyebrow">Full-resolution live intelligence</span>
-            <h1 className="h2" style={{ marginTop: 10 }}>The vault is <span className="serif" style={{ color: 'var(--green)' }}>open.</span></h1>
+            <span className="eyebrow">04 / NETWORK REPORT & RUNNING COSTS</span>
+            <h1 className="h2" style={{ marginTop: 10 }}>Your network report is <span className="serif" style={{ color: 'var(--green)' }}>open.</span></h1>
             <p className="small muted" style={{ marginTop: 10, maxWidth: 610, lineHeight: 1.6 }}>{s.snapshot_id} · {s.inputs?.queries?.length || 0} source queries pinned to real block heights · published by {c?.publisher_account || s.meta?.agent_account}</p>
           </div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><Link href="/agent/0" className="btn btn-ghost btn-sm"><Activity size={13} /> Agent console</Link><Link href="/proof" className="btn btn-primary btn-sm"><ShieldCheck size={13} /> Proof panel</Link></div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><Link href="/agent/0" className="btn btn-ghost btn-sm"><Activity size={13} /> Meet the agent</Link><Link href="/proof" className="btn btn-primary btn-sm"><ShieldCheck size={13} /> Check this report</Link></div>
         </div>
         <FreshnessBar delivery={d} snapshot={s} commitment={c} />
       </motion.div>
@@ -71,7 +71,7 @@ export function VaultDashboard({ vault }: { vault: any }) {
         <HealthIndex health={s.agent_health} />
         <ProofPanel snapshotId={s.snapshot_id} fullSnapshot={s} commitment={c} />
         <HistoryTable />
-        <Card className="col-6" title="Provenance & pinned heights">
+        <Card className="col-6" title="Where these numbers came from">
           {Object.entries(s.inputs?.blocks || {}).map(([k, v]: any) => <div className="kv" key={k}><span className="kv-k">{k}</span><span className="kv-v">{Number(v).toLocaleString()}</span></div>)}
           <div className="kv"><span className="kv-k">Price source</span><span className="kv-v" style={{ maxWidth: 260, wordBreak: 'break-all' }}>{s.inputs?.prices?.price_source}</span></div>
           <div className="kv"><span className="kv-k">Price observed</span><span className="kv-v">{new Date((s.inputs?.prices?.price_observed_at || 0) * 1000).toUTCString()}</span></div>
@@ -82,10 +82,13 @@ export function VaultDashboard({ vault }: { vault: any }) {
             </div>
           </details>
         </Card>
-        <Card className="col-6" title="What is measured, what is assumed">
+        <Card className="col-6" title="How to read this report">
+          <p className="small muted">Account balances are recorded chain readings. The cost tool is a budget calculator. Agent activity describes the sample captured at the report time. Open the details when you want the inputs behind a number.</p>
+          <details><summary>Source notes & calculation inputs</summary>
           {(s.meta?.notes || []).map((n: string, i: number) => <div key={i} className="small muted" style={{ lineHeight: 1.6, padding: '7px 0', borderBottom: '1px solid var(--border)' }}>· {n}</div>)}
           {(s.cost_of_living?.assumptions_used || []).map((a: string, i: number) => <div key={i} className="tiny tertiary mono" style={{ padding: '5px 0' }}>· {a}</div>)}
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 14 }}><Badge kind="fact">Live RPC values</Badge><Badge kind="measured">Measured on-chain</Badge><Badge kind="assumption">Labelled estimates</Badge></div>
+          </details>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 14 }}><Badge kind="fact">Recorded chain data</Badge><Badge kind="measured">Checked against the chain</Badge><Badge kind="assumption">Budget estimates</Badge></div>
           <p className="tiny tertiary" style={{ lineHeight: 1.6, marginTop: 14 }}>If a free source fails, the runtime serves the last real snapshot with a visible STALE badge. It never fabricates or silently synthesizes a number.</p>
           <div style={{ marginTop: 14 }}><HashRow label="Snapshot hash" value={c?.content_hash} /><HashRow label="Commitment tx" value={c?.commitment_tx} href={c?.explorer_url} /></div>
         </Card>

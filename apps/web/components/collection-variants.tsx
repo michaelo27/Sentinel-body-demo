@@ -5,9 +5,9 @@ export function CollectionVariants() {
   const q = useJson<any>('/collection-state', { auth: false, intervalMs: 60000 });
   const d = q.data;
   return <section id="character-variants" className="collect-section wrap" aria-labelledby="variants-title" style={{ scrollMarginTop: 90 }}>
-    <span className="eyebrow">SENTINEL COLLECTION · ON-CHAIN ARTWORK</span>
-    <h2 id="variants-title" className="h2">Same Sentinel.<br/><span style={{ color: 'var(--green)' }}>Different identities.</span></h2>
-    <p className="lead">Each registered token ID has its own rendered 3D-style image. Artwork belongs to the NFT and follows it when transferred—not permanently to a wallet.</p>
+    <span className="eyebrow">YOUR NFT. YOUR AGENT.</span>
+    <h2 id="variants-title" className="h2">Six looks.<br/><span style={{ color: 'var(--green)' }}>One useful buddy.</span></h2>
+    <p className="lead">Mint an NFT to unlock a linked agent account and your intel vault. Each token ID has its own artwork. Transfer the NFT and its artwork goes with it.</p>
     <div className="card" style={{ padding: 20, marginBottom: 24 }}>
       {q.loading && !d && <p>Reading finalized testnet state…</p>}
       {q.error && <p role="alert">{q.error} {d ? 'The cards below show the last successful reading, not current availability.' : ''}</p>}
@@ -19,12 +19,12 @@ export function CollectionVariants() {
       {d?.entries.map((art: any, id: number) => {
         const token = d.tokens.find((t: any) => t.token_id === String(id));
         const matches = token && token.metadata?.media === art.media && token.metadata?.media_hash === art.media_hash;
-        const status = token ? (matches ? 'MINTED · METADATA MATCHES' : 'MINTED · METADATA MISMATCH') : id >= Number(d.next_token_id) ? 'REGISTERED · NOT YET MINTED' : 'RESERVED ID · NO NFT RETURNED';
+        const status = token ? (matches ? 'MINTED · ARTWORK CONFIRMED' : 'MINTED · CHECK ARTWORK') : id >= Number(d.next_token_id) ? 'ARTWORK READY · NOT MINTED' : 'RESERVED ID · NO NFT RETURNED';
         return <article className="card" key={id} style={{ overflow: 'hidden' }}>
           <img src={art.media} alt={`${art.name}, artwork registered for Sentinel #${id}`} loading="lazy" style={{ width: '100%', height: 380, objectFit: 'contain', background: '#05141b' }}/>
           <div style={{ padding: 20 }}><span className="eyebrow">#{id} · {status}</span><h3>{art.name}</h3>
             {token ? <><p className="small muted" style={{ overflowWrap: 'anywhere' }}>Owner at this block: {token.owner_id}</p><Link href={`/agent/${id}`} className="text-link">Inspect Sentinel #{id} →</Link></> : <p className="muted">Artwork reserved for this token ID. This card is not proof that an NFT has been minted.</p>}
-            <details className="small muted"><summary>Registered SHA-256 (base64)</summary><p style={{ overflowWrap: 'anywhere' }}>{art.media_hash}</p></details>
+            <details className="small muted"><summary>Artwork fingerprint (SHA-256)</summary><p style={{ overflowWrap: 'anywhere' }}>{art.media_hash}</p></details>
           </div>
         </article>;
       })}

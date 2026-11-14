@@ -102,7 +102,7 @@ export function EmptyState({ title, body, action }: { title: string; body: strin
 export function Badge({ kind, children }: { kind: 'fact' | 'assumption' | 'measured' | 'stale' | 'replay'; children?: React.ReactNode }) {
   const map = {
     fact: ['chip-green', 'VERIFIED'],
-    assumption: ['chip-amber', 'ASSUMPTION'],
+    assumption: ['chip-amber', 'ESTIMATE'],
     measured: ['chip-violet', 'MEASURED'],
     stale: ['chip-amber', 'STALE'],
     replay: ['chip-violet', 'REPLAY'],

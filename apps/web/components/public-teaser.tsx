@@ -13,7 +13,7 @@ export function PublicTeaser({ compact = false }: { compact?: boolean }) {
     <div className="bento">
       <Card className="col-7" style={{ padding: 26 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 18 }}>
-          <div><span className="eyebrow">Public tier · delayed {d?.delay_minutes ?? 15} minutes</span><h2 className="h3" style={{ marginTop: 8 }}>Real data, deliberately dimmed.</h2></div>
+          <div><span className="eyebrow">Public tier · delayed {d?.delay_minutes ?? 15} minutes</span><h2 className="h3" style={{ marginTop: 8 }}>A preview of the network report.</h2></div>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>{d?.stale && <Badge kind="stale">STALE</Badge>}{d?.replay && <Badge kind="replay">REPLAY</Badge>}<Chip><Clock3 size={11} /> <TimeAgo iso={s?.epoch_ts} /></Chip></div>
         </div>
         {pub.loading && !s ? <div style={{ display: 'grid', gap: 12 }}><div className="skeleton" style={{ height: 70 }} /><div className="skeleton" style={{ height: 90 }} /></div> : s ? <>
@@ -30,7 +30,7 @@ export function PublicTeaser({ compact = false }: { compact?: boolean }) {
       </Card>
       <Card className="col-5 locked" style={{ padding: 26, minHeight: 300 }}>
         <div className="locked-blur" style={{ display: 'grid', gap: 14 }}><div className="card-title">FULL RESOLUTION</div><div className="num" style={{ fontSize: 34 }}>+444,331.42</div>{[88, 70, 92, 60, 80].map((w, i) => <div key={i} className="skeleton" style={{ height: i === 4 ? 60 : 16, width: `${w}%` }} />)}</div>
-        <div className="locked-overlay"><Lock size={22} color="var(--green)" /><h3 className="h3">Live tier is locked</h3><p className="small muted" style={{ maxWidth: 250, textAlign: 'center', lineHeight: 1.6, margin: 0 }}>Hold a Sentinel Buddies, prove ownership, unlock every query and pinned block.</p><Link href="/mint" className="btn btn-primary btn-sm">Unlock <ArrowRight size={13} /></Link></div>
+        <div className="locked-overlay"><Lock size={22} color="var(--green)" /><h3 className="h3">Your NFT unlocks the tools</h3><p className="small muted" style={{ maxWidth: 250, textAlign: 'center', lineHeight: 1.6, margin: 0 }}>Own a Sentinel NFT to investigate accounts, watch balances and ask AI to explain your saved evidence.</p><Link href="/mint" className="btn btn-primary btn-sm">Unlock <ArrowRight size={13} /></Link></div>
       </Card>
       {c?.content_hash && <Card className="col-12" style={{ padding: '16px 20px', display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
         <ShieldCheck size={17} color="var(--green)" /><span className="small muted">The live hash is public immediately, even while the data is gated:</span>
