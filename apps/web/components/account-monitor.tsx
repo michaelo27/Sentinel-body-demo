@@ -2,6 +2,7 @@
 import React, {useState} from 'react';
 import {useSentinel} from '../app/providers';
 import {useJson} from '../lib/api';
+import {AiExplanation} from './ai-explanation';
 
 export function AccountMonitor(){
  const s=useSentinel();
@@ -15,6 +16,7 @@ export function AccountMonitor(){
   <h2 id="monitor-title" className="h2" style={{marginTop:12}}>My monitored <span style={{color:'var(--green)'}}>accounts.</span></h2>
   <p className="lead">Watch up to three NEAR accounts. Inspect recorded balances, exact block references and changes between observations. No trades. No fund transfers. No invented explanations.</p>
   {s.scope==='holder'&&<>
+   <AiExplanation/>
    <section className="card" style={{padding:24,marginBottom:20}}>
     <p><strong>{feed.data?.collector_enabled?'Scheduled collector enabled':'Scheduled collector is off or status unavailable'}</strong></p>
     <p className="muted">Observations target a 15-minute interval; queueing, RPC failures and free-tier limits may delay them. These new observations are <strong>not yet committed on-chain</strong>. Dashboard alerts only—no email or push notifications.</p>
