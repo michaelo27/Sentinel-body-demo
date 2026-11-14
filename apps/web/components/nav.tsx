@@ -15,7 +15,7 @@ const LINKS = [
   { href: '/agent/0', label: 'Agent' },
   { href: '/mint', label: 'Mint' },
   { href: '/verify', label: 'Verify' },
-  { href: '/watchlist', label: 'Watchlist' },
+  { href: '/vault', label: 'Vault' },
 ];
 
 export function Nav() {
