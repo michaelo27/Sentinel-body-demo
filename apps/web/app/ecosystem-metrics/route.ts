@@ -1,0 +1,7 @@
+import {NextResponse} from 'next/server';
+import {ECOSYSTEM_SOURCES,normalizeTvl,normalizeOverview} from '@/lib/ecosystem-data';
+export const dynamic='force-dynamic';
+let cached:any=null,expires=0,pending:Promise<any>|null=null;
+async function read(url:string){const r=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(12000)});if(!r.ok)throw Error('Source temporarily unavailable');const text=await r.text();if(text.length>2000000)throw Error('Source response too large');return JSON.parse(text);}
+async function load(){const fetched_at=Date.now();const [tvl,dex,revenue]=await Promise.all([read(ECOSYSTEM_SOURCES.tvl).then(normalizeTvl),read(ECOSYSTEM_SOURCES.dex).then(j=>normalizeOverview(j,'dex')),read(ECOSYSTEM_SOURCES.revenue).then(j=>normalizeOverview(j,'revenue'))].map(p=>p.then(data=>({status:'available',data})).catch(()=>({status:'unavailable',data:null}))));return {provider:'DefiLlama',network:'NEAR mainnet',fetched_at,tvl,dex,revenue,note:'Third-party aggregates, separate from the saved RPC comparison. Not on-chain commitments or AI outputs. Daily history and provider 24h summaries can use different cutoffs.'};}
+export async function GET(){if(!cached||Date.now()>=expires){if(!pending)pending=load().then(data=>{cached=data;expires=Date.now()+300000;return data;}).finally(()=>{pending=null;});await pending;}return NextResponse.json(cached,{headers:{'Cache-Control':'public, max-age=60, s-maxage=300'}});}

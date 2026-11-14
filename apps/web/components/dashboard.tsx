@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Activity, Clock3, Database, ExternalLink, RefreshCw, ShieldCheck } from 'lucide-react';
 import { CapitalFlow, CostOfLiving, HealthIndex } from './indices';
+import { EcosystemPulse } from './ecosystem-pulse';
+import { AgentEconomySummary } from './agent-economy-summary';
 import { ProofPanel, CommitmentStrip } from './proof-panel';
 import { Card, Chip, Badge, TimeAgo, absoluteTime, shortHash, HashRow, Skeleton, EmptyState } from './ui';
 import { useJson, explorerTx } from '@/lib/api';
@@ -56,8 +58,8 @@ export function VaultDashboard({ vault }: { vault: any }) {
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .5, ease }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 24 }}>
           <div>
-            <span className="eyebrow">04 / NETWORK REPORT & RUNNING COSTS</span>
-            <h1 className="h2" style={{ marginTop: 10 }}>Your network report is <span className="serif" style={{ color: 'var(--green)' }}>open.</span></h1>
+            <span className="eyebrow">NEAR MAINNET / LIQUIDITY, TRADING & REVENUE</span>
+            <h1 className="h2" style={{ marginTop: 10 }}>NEAR Ecosystem<br/><span className="serif" style={{ color: 'var(--green)' }}>Liquidity Intelligence.</span></h1>
             <p className="small muted" style={{ marginTop: 10, maxWidth: 610, lineHeight: 1.6 }}>{s.snapshot_id} · {s.inputs?.queries?.length || 0} source queries pinned to real block heights · published by {c?.publisher_account || s.meta?.agent_account}</p>
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><Link href="/agent/0" className="btn btn-ghost btn-sm"><Activity size={13} /> Meet the agent</Link><Link href="/proof" className="btn btn-primary btn-sm"><ShieldCheck size={13} /> Check this report</Link></div>
@@ -66,9 +68,17 @@ export function VaultDashboard({ vault }: { vault: any }) {
       </motion.div>
 
       <div className="bento" style={{ rowGap: 16 }}>
-        <CapitalFlow flow={s.capital_flow} blocks={s.inputs?.blocks} />
-        <CostOfLiving initial={s.cost_of_living} />
-        <HealthIndex health={s.agent_health} />
+        <CapitalFlow flow={s.capital_flow} blocks={s.inputs?.blocks} prices={s.inputs?.prices} observedAt={s.epoch_ts} />
+        <EcosystemPulse/>
+        <section id="agentic-economy" className="card col-12" style={{padding:26,marginTop:20,scrollMarginTop:90}} aria-labelledby="agentic-title">
+          <span className="eyebrow">A DIFFERENT LENS / AGENT ACTIVITY & ECONOMICS</span>
+          <h2 id="agentic-title" className="h2" style={{marginTop:12}}>Agentic Economy Intel</h2>
+          <p className="lead" style={{maxWidth:850}}>Are the sampled agents doing work, and what would your own setup cost? Explore activity first, then build a running budget. These figures are separate from ecosystem TVL and trading volume.</p>
+          <p className="small muted">Activity uses the saved Sentinel fleet sample—not a census of all AI agents on NEAR. The budget uses saved rates and your chosen workload.</p>
+          <AgentEconomySummary health={s.agent_health} cost={s.cost_of_living}/>
+          <h3 className="h3" style={{marginTop:28}}>Full agent health & running-cost intelligence</h3>
+          <div className="bento" style={{gap:16,marginTop:24}}><HealthIndex health={s.agent_health}/><CostOfLiving initial={s.cost_of_living}/></div>
+        </section>
         <ProofPanel snapshotId={s.snapshot_id} fullSnapshot={s} commitment={c} />
         <HistoryTable />
         <Card className="col-6" title="Where these numbers came from">
