@@ -274,6 +274,20 @@ async function runScheduled(env) {
   }
 }
 
+// hosting/cloudflare/ai-quota.ts
+async function quotaFailure(env, owner, now) {
+  const day = Math.floor(now / 864e5) * 864e5;
+  const counts = await env.DB.prepare("SELECT COUNT(*) AS lifetime, COALESCE(SUM(CASE WHEN created>=? THEN 1 ELSE 0 END),0) AS global_today, COALESCE(SUM(CASE WHEN owner=? AND created>=? THEN 1 ELSE 0 END),0) AS holder_today, MAX(CASE WHEN owner=? THEN created ELSE NULL END) AS last_attempt FROM ai_reports").bind(day, owner, day, owner).first();
+  const reset = new Date(day + 864e5).toISOString();
+  let message;
+  if (Number(counts?.lifetime) >= 40) message = "The demo lifetime limit of 40 AI attempts has been reached. Waiting for tomorrow will not reset it.";
+  else if (Number(counts?.holder_today) >= 10) message = `Your daily AI limit is reached (${counts.holder_today}/10 attempts). Resets at ${reset} (1:00 a.m. Lagos time). The shared global allowance may also be exhausted.`;
+  else if (Number(counts?.global_today) >= 10) message = `The shared daily AI limit is reached (${counts.global_today}/10 attempts across all holders). Resets at ${reset} (1:00 a.m. Lagos time).`;
+  else if (counts?.last_attempt !== null && Number(counts?.last_attempt) > now - 6e4) message = `AI cooldown: wait approximately ${Math.max(1, Math.ceil((Number(counts.last_attempt) + 6e4 - now) / 1e3))} seconds after your previous attempt.`;
+  else message = "An AI attempt for this evidence may already be reserved. Reopen its history to check the recorded status before doing anything else.";
+  throw new HttpError(429, message + " No new model call was made by this rejected request. Failed and pending attempts count.");
+}
+
 // hosting/cloudflare/ai-analysis.ts
 var AI_MODEL = "Qwen/Qwen3-VL-30B-A3B-Instruct";
 var ENDPOINT = "https://cloud-api.near.ai/v1/chat/completions";
@@ -315,7 +329,7 @@ function display(row) {
 async function aiApi(path, method, body, owner, env) {
   if (path === "/api/ai/history" && method === "GET") {
     const { results } = await env.DB.prepare("SELECT r.* FROM ai_reports r JOIN watches w ON w.id=r.watch_id AND w.owner=r.owner WHERE r.owner=? ORDER BY r.created DESC LIMIT 10").bind(owner).all();
-    return { enabled: env.AI_ENABLED === "1" && !!env.NEAR_AI_API_KEY, model: AI_MODEL, items: results.map(display), limits: { holder_per_day: 3, global_per_day: 10, lifetime_attempts: 40, output_tokens: 700 } };
+    return { enabled: env.AI_ENABLED === "1" && !!env.NEAR_AI_API_KEY, model: AI_MODEL, items: results.map(display), limits: { holder_per_day: 10, global_per_day: 10, lifetime_attempts: 40, output_tokens: 700 } };
   }
   if (path !== "/api/ai/explain" || method !== "POST") throw new HttpError(405, "Unsupported AI operation.");
   if (env.AI_ENABLED !== "1" || !env.NEAR_AI_API_KEY) throw new HttpError(503, "AI is disabled or its server secret is not configured.");
@@ -334,8 +348,8 @@ async function aiApi(path, method, body, owner, env) {
     throw new HttpError(409, "This evidence already has a pending or failed attempt. No repeat provider charge requested; inspect execution history.");
   }
   const now = Date.now(), day = Math.floor(now / 864e5) * 864e5, id = crypto.randomUUID();
-  const row = await env.DB.prepare("INSERT INTO ai_reports(id,owner,watch_id,input_hash,model,created,status,evidence_json) SELECT ?,?,?,?,?,?,'pending',? WHERE (SELECT COUNT(*) FROM ai_reports)<40 AND (SELECT COUNT(*) FROM ai_reports WHERE created>=?)<10 AND (SELECT COUNT(*) FROM ai_reports WHERE owner=? AND created>=?)<3 AND NOT EXISTS(SELECT 1 FROM ai_reports WHERE owner=? AND created>?) ON CONFLICT(owner,watch_id,input_hash,model) DO NOTHING RETURNING id").bind(id, owner, w.id, inputHash, AI_MODEL, now, input, day, owner, day, owner, now - 6e4).first();
-  if (!row) throw new HttpError(429, "AI request limit reached or request already running. Limits: 1/minute and 3/day per holder, 10/day globally, 40 total attempts.");
+  const row = await env.DB.prepare("INSERT INTO ai_reports(id,owner,watch_id,input_hash,model,created,status,evidence_json) SELECT ?,?,?,?,?,?,'pending',? WHERE (SELECT COUNT(*) FROM ai_reports)<40 AND (SELECT COUNT(*) FROM ai_reports WHERE created>=?)<10 AND (SELECT COUNT(*) FROM ai_reports WHERE owner=? AND created>=?)<10 AND NOT EXISTS(SELECT 1 FROM ai_reports WHERE owner=? AND created>?) ON CONFLICT(owner,watch_id,input_hash,model) DO NOTHING RETURNING id").bind(id, owner, w.id, inputHash, AI_MODEL, now, input, day, owner, day, owner, now - 6e4).first();
+  if (!row) await quotaFailure(env, owner, now);
   try {
     const r2 = await fetch(ENDPOINT, { method: "POST", headers: { Authorization: `Bearer ${env.NEAR_AI_API_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ model: AI_MODEL, messages: [{ role: "system", content: PROMPT }, { role: "user", content: input }], temperature: 0.2, max_tokens: 700, stream: false }), signal: AbortSignal.timeout(45e3) });
     if (!r2.ok) {
@@ -682,7 +696,7 @@ async function missionApi(path, method, body, owner, env) {
   if (path === "/api/missions/state") {
     const { results } = await env.DB.prepare("SELECT id,kind,target,created,status,error,reviewed_at FROM buddy_cases WHERE owner=? AND token_id=? ORDER BY created DESC LIMIT 30").bind(owner, token).all();
     const { results: watches } = await env.DB.prepare("SELECT id,account,network FROM watches WHERE owner=? ORDER BY created DESC LIMIT 3").bind(owner).all();
-    return { profile: await profile(env, owner, token), cases: results, watches, agent_account: agent, model: AI_MODEL, enabled: env.AI_ENABLED === "1" && !!env.NEAR_AI_API_KEY, limits: "Shares existing AI limits: 1 attempt/minute and 3/day per holder; 10/day globally; 40 lifetime attempts. Failed/uncertain attempts count. No automatic retries." };
+    return { profile: await profile(env, owner, token), cases: results, watches, agent_account: agent, model: AI_MODEL, enabled: env.AI_ENABLED === "1" && !!env.NEAR_AI_API_KEY, limits: "Shares existing AI limits: 1 attempt/minute and 10/day per holder; 10/day globally; 40 lifetime attempts. Failed/uncertain attempts count. No automatic retries." };
   }
   if (path === "/api/missions/profile") {
     await rate2(env, owner);
@@ -737,8 +751,8 @@ async function missionApi(path, method, body, owner, env) {
   const evidence = JSON.parse(row.evidence_json);
   if (!evidence.sources.length) throw new HttpError(409, "No sources succeeded. AI will not invent a report.");
   const now = Date.now(), day = Math.floor(now / 864e5) * 864e5, id = crypto.randomUUID();
-  const reserve = await env.DB.prepare("INSERT INTO ai_reports(id,owner,watch_id,input_hash,model,created,status,evidence_json) SELECT ?,?,?,?,?,?,'pending',? WHERE (SELECT COUNT(*) FROM ai_reports)<40 AND (SELECT COUNT(*) FROM ai_reports WHERE created>=?)<10 AND (SELECT COUNT(*) FROM ai_reports WHERE owner=? AND created>=?)<3 AND NOT EXISTS(SELECT 1 FROM ai_reports WHERE owner=? AND created>?) ON CONFLICT(owner,watch_id,input_hash,model) DO NOTHING RETURNING id").bind(id, owner, `mission:${row.id}`, row.evidence_hash, AI_MODEL, now, row.evidence_json, day, owner, day, owner, now - 6e4).first();
-  if (!reserve) throw new HttpError(429, "Shared AI quota reached or request already running. No model call made.");
+  const reserve = await env.DB.prepare("INSERT INTO ai_reports(id,owner,watch_id,input_hash,model,created,status,evidence_json) SELECT ?,?,?,?,?,?,'pending',? WHERE (SELECT COUNT(*) FROM ai_reports)<40 AND (SELECT COUNT(*) FROM ai_reports WHERE created>=?)<10 AND (SELECT COUNT(*) FROM ai_reports WHERE owner=? AND created>=?)<10 AND NOT EXISTS(SELECT 1 FROM ai_reports WHERE owner=? AND created>?) ON CONFLICT(owner,watch_id,input_hash,model) DO NOTHING RETURNING id").bind(id, owner, `mission:${row.id}`, row.evidence_hash, AI_MODEL, now, row.evidence_json, day, owner, day, owner, now - 6e4).first();
+  if (!reserve) await quotaFailure(env, owner, now);
   try {
     const response = await readJson(MODEL_URL, { method: "POST", headers: { Authorization: `Bearer ${env.NEAR_AI_API_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ model: AI_MODEL, messages: [{ role: "system", content: SYSTEM }, { role: "user", content: row.evidence_json }], temperature: 0.2, max_tokens: 1200, stream: false }), timeout: 45e3 }, 32768);
     const c = response.choices?.[0];

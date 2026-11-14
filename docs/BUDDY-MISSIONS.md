@@ -51,7 +51,7 @@ Removing a watch does not erase already saved case content or model-attempt audi
 
 - Four write/collection mission operations per minute per holder; the existing investigator also retains its own five-check/minute limit.
 - One new case per holder per 30 seconds; 30 cases per holder and 120 globally. Failed or interrupted collections remain counted. Up to 30 cases per selected buddy are listed.
-- AI shares the existing `ai_reports` reservation/quota table: one attempt/minute, three/day per holder, ten/day globally and 40 lifetime demo attempts across old and new AI tools. MIS01 does not reset history or raise those caps.
+- AI shares the existing `ai_reports` reservation/quota table: one attempt/minute, ten/day per holder, ten/day globally and 40 lifetime demo attempts across old and new AI tools. MIS01 does not reset history. QUOTA01 raises only the holder daily cap from three to ten with approval; the global daily and lifetime caps stay unchanged.
 - At most 20,000 characters of saved evidence per case and 1,200 model output tokens for a mission explanation. Legacy explanations keep their 700-token limit.
 - Bounded response streams and fetch timeouts; no automatic paid retries. Partial source failures are visible. A case with zero successful sources cannot call the model.
 - Provider-reported token usage is shown when available. Exact dollar cost is not returned by this implementation; use provider billing. Existing $10 credits are not a per-application spending cap. Failed/time-out calls may incur charges.

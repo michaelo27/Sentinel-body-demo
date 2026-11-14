@@ -55,7 +55,7 @@ The MIS01 source update adds three practical capabilities without removing the e
 
 **Two steps, clear consent:** collect evidence without an AI charge; inspect recorded facts, source gaps and the tool log; then explicitly request AI synthesis. Reopen a completed case without another model call. Cases and preferences are private to the creating holder and selected NFT; a new NFT owner does not inherit private history.
 
-The model explains evidence gathered by a bounded server plan. It does not freely browse, hold signing keys, trade or invent missing history. NearBlocks provides at most five recent activity records, not a complete ledger or proof of a balance drop's cause. The existing AI quota is shared with missions, not increased. Exact provider cost must be checked in provider billing; reported token usage appears in the case.
+The model explains evidence gathered by a bounded server plan. It does not freely browse, hold signing keys, trade or invent missing history. NearBlocks provides at most five recent activity records, not a complete ledger or proof of a balance drop's cause. The existing AI quota is shared with missions, raised to ten per day per holder with approval, while retaining ten per day globally and forty lifetime attempts. Exact provider cost must be checked in provider billing; reported token usage appears in the case.
 
 **Deployment/evidence status:** implemented and tested locally, including live read-only source collection; production deployment and live inference for the new prompt still require confirmation. Private case JSON is not an AG01 publication packet. The existing watch-report publication flow remains unchanged; mission cases are not claimed as on-chain publications.
 
@@ -323,7 +323,7 @@ cargo build --locked --target wasm32-unknown-unknown --release -p sentinel-body
 | Autonomous per-NFT execution | **Not implemented**; publication is operator-triggered |
 | Independent AI attestation / truth verification | **Not implemented** |
 
-Operational limits: three watches per holder / thirty globally; collector handles at most three due watches per tick. AI is holder-triggered with consent, bounded input, 700 maximum output tokens, caching, no automatic retries, one new attempt/minute and three/day per holder, ten/day globally and forty total demo attempts. Failed attempts count. These are application request limits, not a dollar cap on other uses of the API key. Credits, RPC availability and free-tier CPU limits can interrupt service.
+Operational limits: three watches per holder / thirty globally; collector handles at most three due watches per tick. AI is holder-triggered with consent, bounded input, maximum output of 700 tokens for observation explanations or 1,200 for mission explanations, caching, no automatic retries, one new attempt/minute and ten/day per holder, ten/day globally and forty total demo attempts. Failed attempts count. These are application request limits, not a dollar cap on other uses of the API key. Credits, RPC availability and free-tier CPU limits can interrupt service.
 
 Model source-ID validation prevents fabricated reference IDs, **not all hallucinations**. Explanations remain unverified hypotheses. Saved reports can be stale. Private observations and AI reports are not automatically on-chain; only explicitly published report packets receive commitments. D1 audit/quota records remain after a watch is removed, although they are hidden from the watch-linked UI.
 

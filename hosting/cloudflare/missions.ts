@@ -1,3 +1,4 @@
+import {quotaFailure} from './ai-quota';
 import {HttpError,pool,CONTRACT} from './platform';
 import {investigate} from './investigate';
 import {evidenceFor,AI_MODEL} from './ai-analysis';
@@ -53,7 +54,7 @@ export async function missionApi(path:string,method:string,body:any,owner:string
  if(path==='/api/missions/state'){
   const {results}=await env.DB.prepare('SELECT id,kind,target,created,status,error,reviewed_at FROM buddy_cases WHERE owner=? AND token_id=? ORDER BY created DESC LIMIT 30').bind(owner,token).all();
   const {results:watches}=await env.DB.prepare('SELECT id,account,network FROM watches WHERE owner=? ORDER BY created DESC LIMIT 3').bind(owner).all();
-  return {profile:await profile(env,owner,token),cases:results,watches,agent_account:agent,model:AI_MODEL,enabled:env.AI_ENABLED==='1'&&!!env.NEAR_AI_API_KEY,limits:'Shares existing AI limits: 1 attempt/minute and 3/day per holder; 10/day globally; 40 lifetime attempts. Failed/uncertain attempts count. No automatic retries.'};
+  return {profile:await profile(env,owner,token),cases:results,watches,agent_account:agent,model:AI_MODEL,enabled:env.AI_ENABLED==='1'&&!!env.NEAR_AI_API_KEY,limits:'Shares existing AI limits: 1 attempt/minute and 10/day per holder; 10/day globally; 40 lifetime attempts. Failed/uncertain attempts count. No automatic retries.'};
  }
  if(path==='/api/missions/profile'){
   await rate(env,owner);const p=body.profile;
@@ -88,8 +89,8 @@ export async function missionApi(path:string,method:string,body:any,owner:string
  if(env.AI_ENABLED!=='1'||!env.NEAR_AI_API_KEY)throw new HttpError(503,'AI is disabled or its server secret is not configured. Evidence tools still work.');
  const evidence=JSON.parse(row.evidence_json);if(!evidence.sources.length)throw new HttpError(409,'No sources succeeded. AI will not invent a report.');
  const now=Date.now(),day=Math.floor(now/86400000)*86400000,id=crypto.randomUUID();
- const reserve=await env.DB.prepare("INSERT INTO ai_reports(id,owner,watch_id,input_hash,model,created,status,evidence_json) SELECT ?,?,?,?,?,?,'pending',? WHERE (SELECT COUNT(*) FROM ai_reports)<40 AND (SELECT COUNT(*) FROM ai_reports WHERE created>=?)<10 AND (SELECT COUNT(*) FROM ai_reports WHERE owner=? AND created>=?)<3 AND NOT EXISTS(SELECT 1 FROM ai_reports WHERE owner=? AND created>?) ON CONFLICT(owner,watch_id,input_hash,model) DO NOTHING RETURNING id").bind(id,owner,`mission:${row.id}`,row.evidence_hash,AI_MODEL,now,row.evidence_json,day,owner,day,owner,now-60000).first();
- if(!reserve)throw new HttpError(429,'Shared AI quota reached or request already running. No model call made.');
+ const reserve=await env.DB.prepare("INSERT INTO ai_reports(id,owner,watch_id,input_hash,model,created,status,evidence_json) SELECT ?,?,?,?,?,?,'pending',? WHERE (SELECT COUNT(*) FROM ai_reports)<40 AND (SELECT COUNT(*) FROM ai_reports WHERE created>=?)<10 AND (SELECT COUNT(*) FROM ai_reports WHERE owner=? AND created>=?)<10 AND NOT EXISTS(SELECT 1 FROM ai_reports WHERE owner=? AND created>?) ON CONFLICT(owner,watch_id,input_hash,model) DO NOTHING RETURNING id").bind(id,owner,`mission:${row.id}`,row.evidence_hash,AI_MODEL,now,row.evidence_json,day,owner,day,owner,now-60000).first();
+ if(!reserve)await quotaFailure(env,owner,now);
  try{
   const response=await readJson(MODEL_URL,{method:'POST',headers:{Authorization:`Bearer ${env.NEAR_AI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({model:AI_MODEL,messages:[{role:'system',content:SYSTEM},{role:'user',content:row.evidence_json}],temperature:0.2,max_tokens:1200,stream:false}),timeout:45000},32768);
   const c=response.choices?.[0];if(c?.finish_reason!=='stop'||typeof c.message?.content!=='string')throw Error('Incomplete model output');

@@ -1,3 +1,4 @@
+import {quotaFailure} from './ai-quota';
 import { HttpError } from './platform';
 import { formatNear } from './watchlist';
 export const AI_MODEL='Qwen/Qwen3-VL-30B-A3B-Instruct';
@@ -26,7 +27,7 @@ function display(row:any){return {id:row.id,created:row.created,status:row.statu
 export async function aiApi(path:string,method:string,body:any,owner:string,env:any){
  if(path==='/api/ai/history'&&method==='GET'){
   const {results}=await env.DB.prepare('SELECT r.* FROM ai_reports r JOIN watches w ON w.id=r.watch_id AND w.owner=r.owner WHERE r.owner=? ORDER BY r.created DESC LIMIT 10').bind(owner).all();
-  return {enabled:env.AI_ENABLED==='1'&&!!env.NEAR_AI_API_KEY,model:AI_MODEL,items:results.map(display),limits:{holder_per_day:3,global_per_day:10,lifetime_attempts:40,output_tokens:700}};
+  return {enabled:env.AI_ENABLED==='1'&&!!env.NEAR_AI_API_KEY,model:AI_MODEL,items:results.map(display),limits:{holder_per_day:10,global_per_day:10,lifetime_attempts:40,output_tokens:700}};
  }
  if(path!=='/api/ai/explain'||method!=='POST')throw new HttpError(405,'Unsupported AI operation.');
  if(env.AI_ENABLED!=='1'||!env.NEAR_AI_API_KEY)throw new HttpError(503,'AI is disabled or its server secret is not configured.');
@@ -41,8 +42,8 @@ export async function aiApi(path:string,method:string,body:any,owner:string,env:
  if(existing){if(existing.status==='complete')return {...display(existing),cached:true};throw new HttpError(409,'This evidence already has a pending or failed attempt. No repeat provider charge requested; inspect execution history.');}
  const now=Date.now(),day=Math.floor(now/86400000)*86400000,id=crypto.randomUUID();
  // One atomic insert reserves quota before any model call. Failed/uncertain calls retain their slot.
- const row=await env.DB.prepare("INSERT INTO ai_reports(id,owner,watch_id,input_hash,model,created,status,evidence_json) SELECT ?,?,?,?,?,?,'pending',? WHERE (SELECT COUNT(*) FROM ai_reports)<40 AND (SELECT COUNT(*) FROM ai_reports WHERE created>=?)<10 AND (SELECT COUNT(*) FROM ai_reports WHERE owner=? AND created>=?)<3 AND NOT EXISTS(SELECT 1 FROM ai_reports WHERE owner=? AND created>?) ON CONFLICT(owner,watch_id,input_hash,model) DO NOTHING RETURNING id").bind(id,owner,w.id,inputHash,AI_MODEL,now,input,day,owner,day,owner,now-60000).first();
- if(!row)throw new HttpError(429,'AI request limit reached or request already running. Limits: 1/minute and 3/day per holder, 10/day globally, 40 total attempts.');
+ const row=await env.DB.prepare("INSERT INTO ai_reports(id,owner,watch_id,input_hash,model,created,status,evidence_json) SELECT ?,?,?,?,?,?,'pending',? WHERE (SELECT COUNT(*) FROM ai_reports)<40 AND (SELECT COUNT(*) FROM ai_reports WHERE created>=?)<10 AND (SELECT COUNT(*) FROM ai_reports WHERE owner=? AND created>=?)<10 AND NOT EXISTS(SELECT 1 FROM ai_reports WHERE owner=? AND created>?) ON CONFLICT(owner,watch_id,input_hash,model) DO NOTHING RETURNING id").bind(id,owner,w.id,inputHash,AI_MODEL,now,input,day,owner,day,owner,now-60000).first();
+ if(!row)await quotaFailure(env,owner,now);
  try{
   const r=await fetch(ENDPOINT,{method:'POST',headers:{Authorization:`Bearer ${env.NEAR_AI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({model:AI_MODEL,messages:[{role:'system',content:PROMPT},{role:'user',content:input}],temperature:0.2,max_tokens:700,stream:false}),signal:AbortSignal.timeout(45000)});
   if(!r.ok){await r.body?.cancel();throw Error(`NEAR AI returned HTTP ${r.status}. No analysis generated.`);}
