@@ -28,6 +28,8 @@ use near_sdk::{
 };
 use std::collections::HashMap;
 
+mod artwork;
+
 /// Bytes of the controller contract. `scripts/build-contracts.sh` builds the
 /// size-optimized wasm first and overwrites this file before this crate compiles.
 const AGENT_WASM: &[u8] = include_bytes!("../res/agent_account.wasm");
@@ -271,6 +273,7 @@ impl SentinelBody {
         );
 
         let token_id = self.next_token_id;
+        self.assert_artwork_available(token_id);
         self.next_token_id += 1;
         let agent_account: AccountId = format!("agent-{}.{}", token_id, env::current_account_id())
             .parse()
@@ -363,7 +366,7 @@ impl SentinelBody {
             "controller": "near-sdk 5.30.1",
         })
         .to_string();
-        let token_metadata = TokenMetadata {
+        let mut token_metadata = TokenMetadata {
             title: Some(format!("Sentinel Body #{}", token_id)),
             description: Some(
                 "A living AI agent. Holding this body unlocks the live, verifiable intelligence vault; transferring it transfers the agent and the access right.".to_string(),
@@ -381,6 +384,7 @@ impl SentinelBody {
             reference: None,
             reference_hash: None,
         };
+        self.apply_registered_artwork(token_id, &mut token_metadata);
         // A private callback has no attached deposit, so use the no-refund
         // variant and emit the standard NEP-297 mint event explicitly.
         let token = self.tokens.internal_mint_with_refund(
