@@ -18,15 +18,27 @@ The Vault also separates **NEAR Ecosystem Liquidity Intelligence** from **Agenti
 >
 > This is a testnet prototype. The Worker collects data, NEAR AI Cloud generates text, and an operator-triggered local process publishes as the NFT's agent. **It is not an autonomous AI running on-chain.**
 
+## Reading guide
+
+- [Evidence and authenticity](#evidence-and-authenticity--read-this-before-judging-the-numbers)
+- [Latest release and verification status](#latest-release--what-changed-and-what-has-been-checked)
+- [Features and mission walkthrough](#what-your-buddy-unlocks)
+- [No-wallet judge walkthrough](#try-it-in-3-minutes--no-wallet-required)
+- [Holder walkthrough](#holder-walkthrough--do-x--see-y)
+- [Architecture and trust boundaries](#architecture-and-trust-boundaries)
+- [Setup and verification commands](#run-and-inspect-the-source)
+- [Evidence status and limitations](#evidence-status-and-limitations)
+- [Source map](#source-map)
+
 ## Evidence and authenticity — read this before judging the numbers
 
 The Vault distinguishes **block-pinned chain readings**, **third-party provider metrics**, **custom models/estimates** and **AI interpretations**. They are not equally verified. [The authenticity audit](docs/AUTHENTICITY-AUDIT.md) documents findings, corrections, source coverage and reproduction steps.
 
-AUD01 adds a fresh, reproducible native-NEAR liquidity sample (two actual block hashes, 1,200 blocks apart, exact integer deltas) and a separate current Sentinel fleet evidence card. Download raw RPC responses and check them with `node scripts/check-chain-evidence.mjs --packet <file> --reread` after deployment. No wallet or AI credit is required. The old snapshot's hash was checked against the live contract and matches, but that proves integrity—not every original source value.
+AUD01 adds a fresh, reproducible native-NEAR liquidity sample (two actual block hashes, 1,200 blocks apart, exact integer deltas) and a separate current Sentinel fleet evidence card. Download raw RPC responses and check them with `node scripts/check-chain-evidence.mjs --packet <file> --reread`. No wallet or AI credit is required. The old snapshot's hash was checked against the live contract and matches, but that proves integrity—not every original source value.
 
 The historical health gauge remains available as an explicitly labelled **custom model**: missing baselines previously produced neutral scores; confidence/coverage fields are design weights, not statistical confidence or an official NEAR rating. Recalculated cross-chain budgets now include the same AI/hosting plan and exclude rent reserves from recurring totals; they are still scenario estimates, not execution benchmarks.
 
-Official BigQuery/Intents documentation was reviewed, but neither is falsely claimed as an active integration. BigQuery queries can cost money; the Intents Explorer requires a partner JWT. No paid infrastructure or new secrets were introduced. See the audit for the tested source paths and remaining limits. AUD01 must be deployed before the new evidence endpoint is available.
+Official BigQuery/Intents documentation was reviewed, but neither is falsely claimed as an active integration. BigQuery queries can cost money; the Intents Explorer requires a partner JWT. No paid infrastructure or new secrets were introduced. See the audit for the tested source paths and remaining limits. The deployed `/chain-evidence` endpoint was checked successfully: both liquidity and fleet sources returned available, and the public evidence checker passed. This is a point-in-time result, not a guarantee of continuous source availability.
 
 ## At a glance — for human and automated reviewers
 
@@ -40,6 +52,18 @@ Official BigQuery/Intents documentation was reviewed, but neither is falsely cla
 | Is the agent autonomous? | Not in this prototype. Publication requires an operator’s local restricted key and explicit approval. |
 | Can judges review without a wallet? | Yes: collection, agent mapping, the demonstrated transaction and the public evidence-checking script. Private holder tools require ownership authentication. |
 | What is new in the current UI? | Guided investigation tools; expanded liquidity map with account explanations; separate TVL/trading/revenue metrics; full agent health and cost intelligence with additional summary cards. |
+
+## Latest release — what changed and what has been checked
+
+| Release | User-facing improvement | Verification status |
+|---|---|---|
+| UX01 | Guided account/transaction investigation and clearer NFT-linked AI agent positioning. | Live read-only checks and backend regression tests passed. |
+| ECO01, revised | Separate liquidity and agentic-economy sections; expanded account map; provider TVL, trading and revenue; original health/cost tools retained. | Owner reviewed the deployed interface. The deployed ecosystem endpoint returned all three provider sources as available during the latest check. |
+| MIS01 | Buddy Investigation Desk: evidence collection, AI case explanations, saved priorities, personal briefings and ecosystem briefings. | Owner demonstrated a completed transaction mission and a real NEAR AI readout in production. Other mission types have local/mock coverage and live public-source checks; a completed production AI run for every type is not claimed. |
+| QUOTA01 | Holder allowance increased to ten attempts/day; specific quota/cooldown errors beside the AI button. | Deployed; the owner’s previously blocked mission completed after the fix. Global daily and lifetime caps were not increased or reset. |
+| AUD01 | Exact block-pinned liquidity evidence, current fleet evidence, downloadable raw responses, honest model labels and corrected budget comparisons. | Deployed public endpoint returned available liquidity/fleet data; `check-chain-evidence.mjs` passed. During development, 24 pinned RPC responses also matched a subsequent reread. |
+
+These checks do not certify every AI sentence, every upstream aggregate or every application path. The limitations and reproduction steps below are part of the evidence, not optional fine print.
 
 ## The problem and solution
 
@@ -57,7 +81,7 @@ Sentinel Buddies separates those responsibilities:
 
 ### Buddy Investigation Desk — tool-assisted missions
 
-The MIS01 source update adds three practical capabilities without removing the existing intelligence tools:
+The deployed Buddy Investigation Desk adds three practical capabilities without removing the existing intelligence tools:
 
 1. **Investigate an account or transaction:** gather finalized state/permissions or transaction execution, compare a previous saved key check when available, inspect watched balance evidence and collect a bounded recent activity sample. Ask AI to turn these sources into findings, unresolved questions and next checks.
 2. **Remember my priorities:** save selected watches, reporting focus and style for your buddy. A personal briefing compares recorded balances and the latest briefing you explicitly marked reviewed. It is on demand, not scheduled AI monitoring.
@@ -71,6 +95,27 @@ The model explains evidence gathered by a bounded server plan. It does not freel
 
 See [Buddy missions: use, privacy, limits and deployment](docs/BUDDY-MISSIONS.md) for the full walkthrough and source map.
 
+
+### Try a buddy mission — do X → see Y
+
+This flow requires a wallet that **currently owns** the selected NFT. Do not ask for another holder’s keys or private case exports.
+
+| Action | Expected result |
+|---|---|
+| Open Vault, authenticate, enter your NFT ID and select **Open my buddy’s desk**. | The linked agent identity, your private priorities and case history load. Ownership is rechecked on each mission request. |
+| Choose **Investigate an account**, **Unpack a transaction**, **What changed for me?**, or **Brief me on NEAR**. | A bounded read-only plan explains which evidence will be collected and its limits. |
+| Supply the required account/network or transaction hash/signer; optionally enter a question. Click **Collect evidence — no AI charge**. | A case file shows the tool log, readable recorded facts, evidence gaps and source notebook. No model call or transaction is made. |
+| Inspect the evidence, then explicitly consent and click **Ask my buddy to explain the evidence** once. | On success, the case shows **AI SYNTHESIS / COMPLETE**, a readout, source-linked findings, unresolved questions, next checks and provider-reported token usage. This step can incur an AI charge. |
+| Reopen that case from history. | The saved explanation is returned without requesting another inference. A failed/pending attempt is retained and not automatically retried. |
+| For personal briefings, save existing watch selections in **My buddy priorities & memory**, collect a personal case, then choose **Mark reviewed**. | The next personal briefing can compare newer saved observations with that explicitly reviewed baseline. Opening a case alone does not advance the baseline. |
+
+**Reproduce the demonstrated transaction mission:** use NEAR testnet, transaction hash `EPrjhgDpKxA6s2PZwm9QvuiacqtRXYx1uyshv9ahN1zL`, signer `agent-1.sntl-02e90eacb8.testnet`, and ask “What did my agent publish, did the transaction complete, and what does this transaction prove?” Recorded execution completed with one `publish_snapshot` action, zero attached NEAR and **0.0002771052331897 NEAR** burnt across returned outcomes. No new chain transaction is sent by investigating it.
+
+The owner demonstrated a completed live AI response for that case. That response also overstated what could be concluded about recipients and broader history; subsequent prompt instructions clarify those boundaries. A model completing successfully is not the same as all its claims being verified. Old case results are retained rather than silently rewritten.
+
+**Memory and privacy:** up to three existing watches, a priority and a reporting style are stored per holder/buddy. Personal briefings use saved observations, not continuous live scans or scheduled model calls. Account-permission comparisons require saved account missions; a preference does not enable background key monitoring. A new NFT owner cannot read the previous holder’s private cases. Prior case/model records remain when a watch is removed.
+
+**Case files are not publication packets.** Downloading case JSON or its checksum does not publish it on-chain. The existing AG01 publisher accepts the separate watch-observation report format, not mission cases. Do not feed a mission export to that publisher.
 
 ### 1. Investigate before you guess
 
@@ -124,9 +169,10 @@ This is a separate section, not another name for ecosystem liquidity. **The new 
 
 | Part | What you can inspect |
 |---|---|
-| Agent activity at a glance | Active/total sampled agents and the saved activity score. |
+| Current direct-chain fleet evidence | Up to 20 minted NFTs, their agent mappings and native balances, up to 50 retained report commitments and the subset timestamped within 24 hours of the source block. All queried at one finalized testnet block. |
+| Agent activity at a glance | Historical sampled-agent counts and the explicitly labelled custom model score. |
 | Saved running-budget example | A quick monthly estimate from the saved scenario. It stays fixed when you change calculator settings below. |
-| Full agent health | Score gauge, evidence confidence, coverage, sampled-agent count, individual signal breakdowns and sample-account information. |
+| Full historical health model | Original gauge and signal breakdowns, with custom completeness weights, missing-baseline defaults and duplicated proxies explained. Not statistical confidence or official NEAR health. |
 | Interactive running-cost calculator | Workload sliders and model selection, network fees, AI usage, hosting, storage, cost per 1,000 actions and cross-chain comparisons. |
 | Calculation details | Saved rates, inputs, formulas and available provenance. |
 
@@ -153,6 +199,25 @@ This is a separate section, not another name for ecosystem liquidity. **The new 
 | 3. Open the [agent #1 transaction](https://testnet.nearblocks.io/txns/EPrjhgDpKxA6s2PZwm9QvuiacqtRXYx1uyshv9ahN1zL). | A successful transaction signed by **agent #1**, calling `publish_snapshot` on the NFT contract—not merely a Genesis #0 example. |
 | 4. From a repository checkout, run `node scripts/check-submission-evidence.mjs`. | PASS checks for distinct artwork hashes, NFT #1 metadata/mapping, restricted agent permissions and the documented publication's signer/hash. No dependencies or secrets required beyond Node and internet. |
 | 5. Open [Mint](https://sentinel-body.vercel.app/mint), without clicking mint. | Remaining registered IDs, the next artwork at the displayed block and a live availability panel. Wallet connection alone does not mint. |
+
+### Verify public evidence without spending credits
+
+```powershell
+node scripts/check-submission-evidence.mjs
+node scripts/check-chain-evidence.mjs
+```
+
+The first checks the collection, agent mapping, restricted access key and demonstrated publication. The second retrieves the deployed public chain-evidence packet and checks its checksum, pinned references, integer balance arithmetic and retained-publication counts. Neither script signs transactions, reads private keys or calls AI. These checks passed against the deployed endpoints during the latest documentation update.
+
+For an additional source reread, save the raw packet from the fleet evidence card and run:
+
+```powershell
+node scripts/check-chain-evidence.mjs --packet "C:\path\to\sentinel-chain-evidence.json" --reread
+```
+
+Old state may be pruned or rate-limited. The script reports unavailable rereads separately from matches; it does not treat missing data as verification. A matching checksum establishes byte integrity, not independent attestation of an RPC provider or correctness of a model conclusion.
+
+Public JSON endpoints: [chain evidence](https://sentinel-body.vercel.app/chain-evidence) · [ecosystem provider metrics](https://sentinel-body.vercel.app/ecosystem-metrics). They contain public-chain/provider data, not private holder watches or AI case contents. Check per-source status and timestamps, not just HTTP 200.
 
 **Expected seed state at the last verification:** 6 artwork entries; existing IDs #0 Original and #1 Arctic; next ID #2 Ember; minting unpaused. #3 Jade, #4 Royal and #5 Solar are registered for subsequent IDs. Four IDs remained; availability is not reserved for judges. Artwork can be appended, so six is not an immutable lifetime cap.
 
@@ -215,7 +280,8 @@ See [Judge and operator guide](docs/JUDGE-GUIDE.md) for publisher commands and a
 - **Rust / near-sdk contracts:** record NFT ownership, agent mappings and bounded report commitments. The contract requires a registered agent signer/predecessor for publication.
 - **NEP-413 wallet authentication:** signed challenges establish holder sessions; the hosted receipt shortcut and organizer demo transaction routes are disabled.
 - **NEAR AI Cloud:** the deployed text-analysis path uses `Qwen/Qwen3-VL-30B-A3B-Instruct` through its OpenAI-compatible API. A successful live response and agent #1 publication were demonstrated. Model attestation is **not independently verified** by this app.
-- **NEAR JSON-RPC:** finalized account observations with block-pinned timestamp provenance, plus read-only account/transaction investigations.
+- **NEAR JSON-RPC:** finalized account observations and read-only account/transaction checks; the new evidence sampler pins all selected amounts to common block hashes and retains raw responses.
+- **NearBlocks indexer:** up to five recent activity records for account missions. A limited lead source, not a complete ledger or independently reconciled money trail.
 - **DefiLlama public APIs:** third-party mainnet TVL, trading and revenue data, fetched by a separate Next.js server route. No private holder data or AI credentials are sent to this provider.
 - **Next.js/React + Vercel; Cloudflare Worker/Cron + D1:** UI, private holder APIs, off-chain collection, AI orchestration and execution records.
 
@@ -241,7 +307,7 @@ Holder wallet ── NEP-413 / ownership check ──> Cloudflare Worker + D1
 
 The agent's **defined responsibility is report publication**. Collection and inference are separate off-chain operations. The existing restricted worker key may be shared across agent accounts; this is not independent key custody per NFT. Holder/report authorization is enforced by the application and local publisher, not atomically by the publication contract. Operator trust and ownership-change races therefore remain relevant.
 
-The shared intelligence section mixes clearly separated sources: the balance map and agent-health report use a **saved snapshot**; Ecosystem Pulse fetches **third-party mainnet aggregates**; the cost tool calculates a **scenario using saved rates**. None is evidence that the holder AI just executed. Private watches and AI execution history are separate. The older Node runtime under `services/agent` is not the deployed Cloudflare runtime. Older milestone documents describe earlier states; this README and `docs/JUDGE-GUIDE.md` describe the submission deployment.
+The shared intelligence section separates **fresh block-pinned mainnet balance comparisons and testnet fleet evidence**, **an explicitly archived fallback and historical health model**, **third-party mainnet ecosystem aggregates**, and **cost scenarios using saved rates**. None is evidence that the holder AI just executed. Private watches and AI execution history are separate. The older Node runtime under `services/agent` is not the deployed Cloudflare runtime. Older milestone documents describe earlier states; this README and `docs/JUDGE-GUIDE.md` describe the submission deployment.
 
 ## Run and inspect the source
 
@@ -289,7 +355,7 @@ Open `http://localhost:3000/collection` → the frontend's `/collection-state` r
 
 Source: `hosting/cloudflare/worker-source.ts`; deployable bundle: `hosting/cloudflare/worker.mjs`.
 
-A separate deployment needs its own Worker, D1 database/binding, exact allowed frontend origin and secrets. Apply the additive schemas in order: `schema.sql`, `schema-watchlist.sql`, `schema-ai.sql`, `schema-agent-reports.sql`. Preserve existing tables when upgrading. `wrangler.jsonc` contains template values, **not a turnkey production configuration**.
+A separate deployment needs its own Worker, D1 database/binding, exact allowed frontend origin and secrets. Apply the additive schemas in order: `schema.sql`, `schema-watchlist.sql`, `schema-ai.sql`, `schema-agent-reports.sql`, `schema-missions.sql`. Preserve existing tables when upgrading. `wrangler.jsonc` contains template values, **not a turnkey production configuration**.
 
 | Binding / setting | Purpose |
 |---|---|
@@ -300,6 +366,8 @@ A separate deployment needs its own Worker, D1 database/binding, exact allowed f
 | Cron `* * * * *` | Check due work each minute; target observation interval is 15 minutes |
 | `NEAR_AI_API_KEY` (secret) | NEAR AI Cloud inference credential; never a public frontend variable |
 | `AI_ENABLED=1` | Opt in to model calls; set `0` to stop new AI calls |
+
+The mission tables are `buddy_profiles` and `buddy_cases`; model attempts reuse `ai_reports` to share quotas. QUOTA01 and AUD01 do not require further SQL migrations. Keep quota/audit history intact. Public `/chain-evidence` and `/ecosystem-metrics` routes run in Next.js, separately from protected Worker APIs.
 
 No agent private key is stored in the hosted Worker. The local publisher reads the existing fresh restricted key from the operator's private keystore only after explicit approval. **Never run `scripts/deploy.mjs` to inspect or upgrade the demo:** it is an initial deployment/initialization workflow.
 
@@ -322,18 +390,23 @@ cargo build --locked --target wasm32-unknown-unknown --release -p sentinel-body
 | Live collection, mint availability, token-specific agent artwork | Deployed; live collection confirmed, individual screens may be affected by RPC/image availability |
 | Private holder watchlists and repeated observations | Demonstrated in production; two blocks shown in the AI report |
 | Exact balance comparison | Demonstrated: zero change across approximately 16 minutes |
-| Genuine NEAR AI inference | Demonstrated; provider reported 1,021 total input/output tokens for the shown response |
+| Original observation AI inference | Demonstrated; provider reported 1,021 total input/output tokens for the original watch-report response. This is not the token count of the newer mission example. |
+| Mission AI transaction readout | Owner demonstrated a completed production response with source-linked findings after QUOTA01; interpretation still requires review. |
+| Personal priorities, review baseline and ecosystem missions | Implemented; mocked backend/privacy tests and live public-source collection passed. A complete production AI demonstration of each is not claimed. |
+| New block-pinned evidence service | Deployed endpoint returned available liquidity/fleet sources; public checksum/arithmetic/count checker passed. Historical source rereads passed during development. |
 | Agent #1 publication and on-chain task-history match | Demonstrated with the linked transaction; independently checked |
 | New mint after the artwork upgrade | **Not separately verified**; do not claim a new post-upgrade mint test passed |
 | Transfer after the upgrade | **Not separately demonstrated**; do not claim end-to-end transfer testing |
 | Low-balance warning | Implemented/local mock-tested; production threshold-crossing test not demonstrated |
 | Read-only account/transaction investigation | Implemented; live read-only and mocked backend checks passed during preparation |
 | Expanded liquidity and full agentic-economy UI | Deployed; owner reviewed the updated presentation |
-| Ecosystem TVL, trading and revenue integration | Public API and local Next route/cache tests passed; external availability and coverage can change |
+| Ecosystem TVL, trading and revenue integration | Deployed endpoint returned all three sources as available during the latest read-only check; external availability and coverage can change |
 | Autonomous per-NFT execution | **Not implemented**; publication is operator-triggered |
 | Independent AI attestation / truth verification | **Not implemented** |
 
 Operational limits: three watches per holder / thirty globally; collector handles at most three due watches per tick. AI is holder-triggered with consent, bounded input, maximum output of 700 tokens for observation explanations or 1,200 for mission explanations, caching, no automatic retries, one new attempt/minute and ten/day per holder, ten/day globally and forty total demo attempts. Failed attempts count. These are application request limits, not a dollar cap on other uses of the API key. Credits, RPC availability and free-tier CPU limits can interrupt service.
+
+Mission collection limits: four mission write/collection operations per minute, one new case per 30 seconds, 30 cases per holder and 120 globally; failed/interrupted collections remain counted. Up to 30 cases per buddy are listed. Personal collection reads up to two saved observations per selected watch. Evidence is bounded to 20,000 characters per case. No scheduled AI mission or automatic retry is introduced.
 
 Model source-ID validation prevents fabricated reference IDs, **not all hallucinations**. Explanations remain unverified hypotheses. Saved reports can be stale. Private observations and AI reports are not automatically on-chain; only explicitly published report packets receive commitments. D1 audit/quota records remain after a watch is removed, although they are hidden from the watch-linked UI.
 
@@ -352,9 +425,17 @@ Artwork uses content-hashed Vercel URLs; hashes detect byte changes but do not g
 | `apps/web/components/account-investigator.tsx` | Guided investigation and Vault introduction |
 | `hosting/cloudflare/watchlist.ts` | Collector, exact arithmetic, source provenance and warning status |
 | `hosting/cloudflare/ai-analysis.ts` | Model prompt, consent, quotas, cache and output/reference validation |
+| `hosting/cloudflare/missions.ts`, `schema-missions.sql` | Mission plans, private preferences/cases, review baselines and bounded AI synthesis |
+| `hosting/cloudflare/ai-quota.ts` | Specific quota/cooldown diagnosis after atomic reservation rejection |
+| `apps/web/components/buddy-missions.tsx` | Mission desk, consent, source notebook, case history and private exports |
 | `hosting/cloudflare/agent-reports.ts` | Token-specific task authorization, packet hash and publication history |
 | `scripts/publish-agent-report.mjs` | Read-only preflight, explicit signing approval and final receipt checks |
 | `scripts/check-submission-evidence.mjs` | Public judge verification without secrets |
+| `scripts/check-chain-evidence.mjs` | Public packet validation and optional historical RPC rereads |
+| `apps/web/app/chain-evidence/route.ts`, `apps/web/lib/chain-evidence.ts` | Block-pinned sampler, exact native deltas, fleet reads, raw evidence and caching |
+| `apps/web/components/evidence-panel.tsx` | Evidence classes, official reference links and direct-fleet evidence |
+| `docs/AUTHENTICITY-AUDIT.md` | Audit findings, corrections, independent checks and limits |
+| `docs/BUDDY-MISSIONS.md` | Mission operation, privacy, tool coverage and deployment details |
 | `apps/web/app/collection-state/route.ts` | Finalized collection-state read |
 | `apps/web/app/ecosystem-metrics/route.ts` | Public provider fetches, per-source failure states and caching |
 | `apps/web/lib/ecosystem-data.ts` | Provider validation, missing-value handling and DEX-only classification |
