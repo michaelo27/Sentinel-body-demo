@@ -9,6 +9,7 @@ import { useOwnershipProof } from '@/lib/ownership';
 import { useJson, explorerTx } from '@/lib/api';
 import { AgentArt } from '@/components/agent-art';
 import { TransferDemo } from '@/components/transfer-demo';
+import { MintAvailability, assertMintAvailable } from '@/components/mint-availability';
 import { Card, Chip, shortHash, Skeleton, Badge } from '@/components/ui';
 
 const BIRTH = [
@@ -55,6 +56,7 @@ export default function MintPage() {
     if (!s.accountId) { setError('Connect a wallet or choose a demo account first.'); return; }
     setBusy(true); setError(''); setMint(null); startBirth();
     try {
+      await assertMintAvailable();
       if (s.mode === 'demo') {
         const r = await s.api<any>('/api/demo/mint', { method: 'POST', body: JSON.stringify({ accountId: s.accountId }) });
         if (!r.tx) throw new Error(r.error || 'Mint did not return a transaction hash.');
@@ -102,6 +104,7 @@ export default function MintPage() {
         {['Connect / identify', 'Mint agent account', 'Prove ownership', 'Vault unlocked'].map((x, i) => <span key={x} className={`chip ${i <= step ? 'chip-green' : ''}`} style={{ opacity: i <= step ? 1 : .55 }}>{i < step ? <Check size={11} /> : null}{i + 1}. {x}</span>)}
       </div>
 
+      <MintAvailability />
       <div className="bento" style={{ rowGap: 16 }}>
         <Card className="col-7" style={{ padding: 28 }}>
           {!s.accountId ? <>
