@@ -1,41 +1,81 @@
-# Architecture — implemented system
+# Architecture
 
-## Data path
+> **Name note:** the product is *Sentinel Buddies*, but the Rust crate, repository, package names and domain still use the original *sentinel-body* identifiers, and on-chain metadata titles may say *Sentinel Body*. The project was renamed after the contracts were deployed. See the notice at the top of the [README](../README.md).
+
+## How evidence becomes intelligence
+
+A balance dashboard shows a number. An AI answer may offer a plausible explanation without evidence. Neither alone tells a holder what was observed, what was calculated or who published the report. Sentinel Buddies separates those responsibilities:
+
+1. **Observe:** a read-only Cloudflare Worker saves NEAR account amounts and exact block references in D1.
+2. **Calculate:** code computes net balance change and elapsed block time using integer arithmetic.
+3. **Explain:** NEAR AI Cloud receives a bounded evidence packet. Observation explanations use at most two saved readings. Mission cases can include account, transaction, watch or ecosystem sources. AI findings stay separate from recorded facts and calculated values.
+4. **Attribute:** the holder prepares a report for a specific NFT they own. Its linked agent publishes the report's canonical SHA-256 hash through a restricted function-call key.
+5. **Verify:** execution history checks the on-chain report hash, token ID and publishing agent. Hash agreement establishes byte consistency and attribution, **not AI correctness or the cause of a balance change**.
+
+## System diagram
+
 ```text
-RPC + price/model catalogs
-          |
-          v
-Node worker -> inputs -> indices/cost model -> snapshot body
-          |                                  |
-          |                            canonical JSON + SHA-256
-          v                                  |
-JSON snapshot vault (persist first)           v
-          |                       testnet publish_snapshot commitment
-          v                                  |
-Fastify public / holder APIs <------- on-chain view calls
-          |
-Next same-origin /api rewrite -> browser WebCrypto verification
+Holder wallet ── NEP-413 / ownership check ──> Cloudflare Worker + D1
+                                                  │
+                      Cron ── NEAR RPC observations│
+                      Holder consent ── NEAR AI ───┤
+                                                  ▼
+                                     Private report + task packet
+                                                  │ download
+                                                  ▼
+                                   Local operator / restricted key
+                                                  │ agent-signed publish_snapshot
+                                                  ▼
+                                      NEAR testnet NFT contract
+                                                  │ read-only verification
+                                                  ▼
+                                           Vault task history
 ```
 
-## Ownership path
-NFT mint -> controller subaccount provisioning -> token/agent registry. A restricted worker key publishes snapshots. NFT transfer changes holder eligibility; it does not migrate or magically run the Node worker on the new owner's machine. The original off-chain operator still controls hosting and data collection. Contract permissions and keys, not marketing language, define control.
+The agent's **defined responsibility is report publication**. Collection and inference are separate off-chain operations.
 
-## Packages and trust boundaries
-- Core functions compute deterministic outputs for fixed inputs. Fetchers depend on external RPC/provider availability.
-- Agent runtime reads config, mainnet inputs by default, and testnet fleet state. It persists a full snapshot before attempting commitment; commitment failure is recorded separately.
-- Contracts manage NFT ownership, agent associations and snapshot commitments. Full payload availability is off-chain.
-- Gateway performs public/delayed delivery and ownership checks. Holders authenticate via a short-lived token after proof. Browser localStorage stores session data; XSS would threaten those tokens.
-- Next proxies to gateway using GATEWAY_INTERNAL_URL. Browser code should not use sandbox localhost to reach a remote backend.
+## Four kinds of evidence
 
-## Storage and runtime behavior
-VaultStore writes JSON files plus index.json under data/snapshots. This is not SQLite, not transactional storage, and not a multi-writer database. Use a single writer; concurrent writes/crashes can damage consistency. Back up payloads separately from on-chain metadata. The scheduler runs at ROUND_INTERVAL_MINUTES (default 30) unless DEMO_REPLAY is enabled. It is an in-process interval, not a durable job queue or failover service.
+The interface separates these source and calculation categories:
 
-## Authentication
-Challenge expiry is five minutes. JWT lifetime defaults to 600 seconds. Holder cache defaults to 30 seconds; transfer handlers invalidate entries after view confirmation, but external transfers/RPC lag can create a revocation delay. Multiple NFTs matter: transferring one does not revoke access if another remains.
+1. **Fresh block-pinned mainnet balance comparisons** and testnet fleet evidence
+2. **An explicitly archived fallback** and the historical health model
+3. **Third-party mainnet ecosystem aggregates** (DefiLlama)
+4. **Cost scenarios** using saved rates
 
-M03 returns HTTP 410 from /api/auth/attest-receipt because untrusted client receipt JSON cannot prove a transaction. NEP-413 and the server-side transaction lookup path remain in source; live wallet compatibility must still be tested. The organizer demo receipt flow receives its result server-side; it remains privileged demo behavior, not proof of the visitor's identity.
+None of these is evidence that a holder's AI just executed. Private watches and AI execution history are kept separate from all of them. What each kind proves and does not prove is in the [README table](../README.md#what-the-evidence-does-and-does-not-prove) and [LIMITATIONS.md](LIMITATIONS.md).
 
-## Deployment boundaries
-Current code defaults are development-oriented: demo mode enabled, known JWT fallback, optional admin token, 0.0.0.0 binding. Explicit environment overrides and network isolation are mandatory even for a private demo. A production design needs fail-closed startup validation, rate limits, centralized challenge/cache storage, hardened admin routes and credential rotation. See THREAT_MODEL.md.
+## Trust boundaries
 
-The chain stores commitments, not truth certificates. Anyone can independently compare bytes to a hash, but still trusts the data providers and operator for observation accuracy and completeness.
+- The restricted worker key may be **shared across agent accounts**. This is not independent key custody per NFT.
+- Holder and report authorization is enforced by the application and the local publisher, **not atomically by the publication contract**. Operator trust and ownership-change races therefore remain relevant.
+- No agent private key is stored in the hosted Worker. The local publisher reads the restricted key from the operator's private keystore only after explicit approval.
+- Administrators can append artwork and upgrade contract code.
+- Model attestation is **not independently verified** by this app.
+- The older Node runtime under `services/agent` is not the deployed Cloudflare runtime. Older milestone documents describe earlier states.
+
+## Why NEAR, and what each technology does
+
+| Technology | Role |
+|---|---|
+| **NEAR accounts and subaccounts** | Minting provisions `agent-<token_id>.<contract>` as a dedicated agent identity |
+| **NEP-171 NFTs / NEP-177 metadata** | Ownership and registered artwork attach to token IDs, so artwork follows a transfer rather than a wallet |
+| **NEAR function-call access keys** | The demonstrated agent has one key restricted to `publish_snapshot` on the NFT contract, with an allowance and no FullAccess permission |
+| **Rust / near-sdk contracts** | Record NFT ownership, agent mappings and bounded report commitments. Publication requires a registered agent signer/predecessor |
+| **NEP-413 wallet authentication** | Signed challenges establish holder sessions. The hosted receipt shortcut and organizer demo transaction routes are disabled |
+| **NEAR AI Cloud** | The deployed text-analysis path uses `Qwen/Qwen3-VL-30B-A3B-Instruct` through an OpenAI-compatible API. Model attestation is not independently verified |
+| **NEAR JSON-RPC** | Finalized account observations and read-only checks. The evidence sampler pins all selected amounts to common block hashes and retains raw responses |
+| **NearBlocks indexer** | Up to five recent activity records for account missions. A limited lead source, not a complete ledger |
+| **DefiLlama public APIs** | Third-party mainnet TVL, trading and revenue data via a separate Next.js server route. No private holder data or AI credentials are sent |
+| **Next.js/React + Vercel; Cloudflare Worker/Cron + D1** | UI, private holder APIs, off-chain collection, AI orchestration and execution records |
+
+## Where things run
+
+| Question | Answer |
+|---|---|
+| Where do minting and report publication run? | NEAR **testnet** |
+| Which networks can be investigated? | Mainnet and testnet |
+| Which network do ecosystem metrics describe? | NEAR **mainnet** |
+| Where does AI run? | Off-chain, through NEAR AI Cloud, when an authenticated holder requests it |
+| What is recorded on-chain? | NFT ownership, agent mapping and explicitly published report commitments. Private report bodies are not published automatically |
+| Is the agent autonomous? | No. Publication needs an operator's local restricted key and explicit approval |
