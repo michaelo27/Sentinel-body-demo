@@ -2,6 +2,7 @@
 import {useState} from 'react';
 import {useSentinel} from '@/app/providers';
 import {useJson} from '@/lib/api';
+import {AgentReport} from './agent-report';
 export function AiExplanation(){
  const s=useSentinel();const watches=useJson<any>(s.scope==='holder'?'/api/watchlist':null,{auth:true,intervalMs:60000});
  const history=useJson<any>(s.scope==='holder'?'/api/ai/history':null,{auth:true});
@@ -25,6 +26,7 @@ export function AiExplanation(){
    {report.evidence.sources.map((r:any)=><div key={r.id} style={{padding:'12px 0',overflowWrap:'anywhere'}}><strong>{r.id}: block {r.block_height}</strong><p>Amount: {r.amount_near} NEAR · Locked: {r.locked_near} NEAR · Storage: {r.storage_usage_bytes} bytes</p><p className="small muted">Observed {new Date(r.observed_at).toLocaleString()} · Block time {new Date(Number(BigInt(r.block_timestamp_ns)/1000000n)).toLocaleString()}<br/>{r.block_hash}<br/>Source: {r.rpc}</p></div>)}
    <h4>Calculated results — computed by code</h4><p>Net amount change: {report.evidence.calculated.net_change_near===null?'Unavailable: need two observations':`${report.evidence.calculated.net_change_near} NEAR`}</p><p className="small muted">Exact elapsed nanoseconds: {report.evidence.calculated.elapsed_nanoseconds??'Unavailable'}</p>
    {report.result&&<><h4>AI interpretation — unverified</h4><p>{report.result.analysis.interpretation} [{report.result.analysis.source_ids.join(', ')}]</p><h4>Possible explanations — hypotheses only</h4>{report.result.analysis.possible_explanations.length?report.result.analysis.possible_explanations.map((p:any,i:number)=><p key={i}>{p.text} [{p.source_ids.join(', ')}]</p>):<p>No possible cause proposed from this evidence.</p>}<h4>What remains unknown</h4><ul>{report.result.analysis.limitations.map((v:string,i:number)=><li key={i}>{v}</li>)}</ul><p className="small muted">{report.result.warning}</p><p className="tiny tertiary">Model: {report.model} · Provider-reported tokens: {report.result.usage?.total_tokens??'unavailable'} · Response ID: {report.result.provider_response_id??'unavailable'}</p></>}
+   {report.status==='complete'&&<AgentReport key={report.id} reportId={report.id}/>}
    <p className="small muted">{report.evidence.scope} Model attestation is not independently verified in this build. Executor: {report.executor}.</p>
   </article>}
   <details style={{marginTop:20}}><summary>AI execution history (latest 10)</summary><p className="small muted">Pending means completion is unconfirmed, not success. Failed or interrupted calls may have incurred provider charges. Removing a watch hides its reports but retains quota/audit records.</p>{(history.data?.items||[]).map((r:any)=><div key={r.id} style={{padding:'10px 0'}}><span>{new Date(r.created).toLocaleString()} · {r.status} · {r.model}</span>{r.status==='complete'&&<button className="btn btn-ghost btn-sm" onClick={()=>setReport(r)}>View saved report</button>}{r.error&&<p role="status">{r.error}</p>}</div>)}</details>
